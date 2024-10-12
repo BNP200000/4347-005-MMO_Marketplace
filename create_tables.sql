@@ -24,3 +24,16 @@ CREATE TABLE
         gold_balance INT,
         PRIMARY KEY (character_id)
     );
+
+CREATE TABLE   
+    IF NOT EXISTS "PARTY" (
+        party_name varchar(50) primary key,
+	    party_balance int
+    );
+
+CREATE TABLE 
+    IF NOT EXISTS "TRANSACTION" (
+        transaction_id char(10) primary key,
+        total_price int,
+        transaction_date date
+    );
