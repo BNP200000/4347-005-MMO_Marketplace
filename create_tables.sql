@@ -25,10 +25,12 @@ CREATE TABLE
         owner_id VARCHAR(25) NOT NULL,
         character_class VARCHAR(25),
         party_leader VARCHAR(25),
+        party_name VARCHAR(50)
         PRIMARY KEY (character_id),
         FOREIGN KEY (owner_id) REFERENCES "USERS" (user_id), -- "OWNS" relationship, 1 to N
         FOREIGN KEY (character_class) REFERENCES "CLASSES" (class_id), -- "BELONGS TO" relationship, 1 to 1
         FOREIGN KEY (party_leader) REFERENCES "CHARACTERS" (character_id) -- "MANAGES" relationship, 1 to N
+        FOREIGN KEY (party_name) REFERENCES "PARTY" (party_name) -- "MEMBER OF" relationship, 1 to N
     );
 
 CREATE TABLE
@@ -257,7 +259,7 @@ VALUES
     );
 
 INSERT INTO
-    "PARTY" (party_name, party_balance)
+    "PARTY" (party_name, party_balance, party_leader)
 VALUES
     ('Lyrical', 53422),
     ('Arcane', 3234223),
