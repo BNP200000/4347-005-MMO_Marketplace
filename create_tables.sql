@@ -24,9 +24,11 @@ CREATE TABLE
         gold_balance INT,
         owner_id VARCHAR(25) NOT NULL,
         character_class VARCHAR(25),
+        party_leader VARCHAR(25),
         PRIMARY KEY (character_id),
         FOREIGN KEY (owner_id) REFERENCES USERS (user_id), -- "OWNS" relationship, 1 to N
-        FOREIGN KEY (character_class) REFERENCES CLASSES (class_id) -- "BELONGS TO" relationship, 1 to 1
+        FOREIGN KEY (character_class) REFERENCES CLASSES (class_id), -- "BELONGS TO" relationship, 1 to 1
+        FOREIGN KEY (party_leader) REFERENCES CHARACTERS (character_id) -- "MANAGES" relationship, 1 to N
     );
 
 CREATE TABLE   
