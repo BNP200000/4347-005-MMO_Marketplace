@@ -284,3 +284,21 @@ INSERT INTO "LISTING" (character_id, item_id, quantity, listing_date, is_active,
 ('4d5e6f789', 14, 9, '2024-08-25', TRUE, 1000),
 ('5e6f7g890', 15, 10, '2024-09-01', FALSE, 800),
 ('6f7g8h901', 16, 11, '2024-09-12', TRUE, 50);
+
+INSERT INTO "IN_INVENTORY" (character_id, item_id, quantity) VALUES
+('1a2b3c456', 1, 32),
+('2b3c4d567', 2, 15),
+('3c4d5e678', 3, 40),
+('4d5e6f789', 4, 22),
+('5e6f7g890', 5, 12),
+('6f7g8h901', 6, 47),
+('7g8h9i012', 7, 29),
+('8h9i0j123', 8, 18),
+('9i0j1k234', 9, 35),
+('0j1k2l345', 10, 41),
+('1a2b3c456', 11, 27),
+('2b3c4d567', 12, 14),
+('3c4d5e678', 13, 38),
+('4d5e6f789', 14, 46),
+('5e6f7g890', 15, 9),
+('6f7g8h901', 16, 44);
