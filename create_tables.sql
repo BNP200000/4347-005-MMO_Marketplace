@@ -25,7 +25,7 @@ CREATE TABLE
         owner_id VARCHAR(25) NOT NULL,
         character_class VARCHAR(25),
         party_leader VARCHAR(25),
-        party_name VARCHAR(50),
+        -- party_name VARCHAR(50),
         PRIMARY KEY (character_id),
         FOREIGN KEY (owner_id) REFERENCES "USERS" (user_id), -- "OWNS" relationship, 1 to N
         FOREIGN KEY (character_class) REFERENCES "CLASSES" (class_id), -- "BELONGS TO" relationship, 1 to 1
