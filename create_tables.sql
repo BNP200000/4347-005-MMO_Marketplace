@@ -33,15 +33,17 @@ CREATE TABLE
 
 CREATE TABLE
     IF NOT EXISTS "PARTY" (
-        party_name varchar(50) primary key,
-        party_balance int
+        party_name VARCHAR(50) PRIMARY KEY,
+        party_balance INT,
+        party_leader VARCHAR(25),
+        FOREIGN KEY (party_leader) REFERENCES "CHARACTERS" (character_id)
     );
 
 CREATE TABLE
     IF NOT EXISTS "TRANSACTION" (
-        transaction_id char(10) primary key,
-        total_price int,
-        transaction_date date
+        transaction_id CHAR(10) PRIMARY KEY,
+        total_price INT,
+        transaction_date DATE
     );
 
 INSERT INTO
@@ -254,10 +256,8 @@ VALUES
         '1a2b3c456'
     );
 
--- Kael is a Paladin, led by Alduin
--- Insert into Party table
 INSERT INTO
-    Party (party_name, party_id)
+    "PARTY" (party_name, party_balance)
 VALUES
     ('Lyrical', 53422),
     ('Arcane', 3234223),
@@ -271,7 +271,7 @@ VALUES
     ('Asgard', 34523);
 
 INSERT INTO
-    Transaction (transaction_id, party_id, transaction_date)
+    "TRANSACTION" (transaction_id, total_price, transaction_date)
 VALUES
     ('741966', 53422, '2024-10-22'),
     ('703221', 3234223, '2024-10-28'),
