@@ -255,27 +255,31 @@ VALUES
     );
 
 -- Kael is a Paladin, led by Alduin
-
 -- Insert into Party table
-insert into Party values('Lyrical', 53422);
-insert into Party values('Arcane', 3234223);
-insert into Party values('Dragon Slayer', 1000);
-insert into Party values('Witch Hunter', 54223);
-insert into Party values('Tuba Gang', 546);
-insert into Party values('Stroopwafel', 564);
-insert into Party values('Birds of Prey', 32);
-insert into Party values('The Fallen', 7869);
-insert into Party values('Masked Fools', 435345);
-insert into Party values('Asgard', 34523);
+INSERT INTO
+    Party (party_name, party_id)
+VALUES
+    ('Lyrical', 53422),
+    ('Arcane', 3234223),
+    ('Dragon Slayer', 1000),
+    ('Witch Hunter', 54223),
+    ('Tuba Gang', 546),
+    ('Stroopwafel', 564),
+    ('Birds of Prey', 32),
+    ('The Fallen', 7869),
+    ('Masked Fools', 435345),
+    ('Asgard', 34523);
 
--- Insert into Transaction table
-insert into Transaction values('741966', 53422, '2024-10-22');
-insert into Transaction values('703221', 3234223, '2024-10-28');
-insert into Transaction values('703814', 1000, '2024-11-04');
-insert into Transaction values('772759', 54223, '2024-11-06');
-insert into Transaction values('744093', 546, '2024-11-12');
-insert into Transaction values('733026', 564, '2024-11-23');
-insert into Transaction values('773521', 32, '2024-11-30');
-insert into Transaction values('781428', 7869, '2024-12-14');
-insert into Transaction values('761722', 435345, '2024-12-21');
-insert into Transaction values('716844', 34523, '2024-12-24');
+INSERT INTO
+    Transaction (transaction_id, party_id, transaction_date)
+VALUES
+    ('741966', 53422, '2024-10-22'),
+    ('703221', 3234223, '2024-10-28'),
+    ('703814', 1000, '2024-11-04'),
+    ('772759', 54223, '2024-11-06'),
+    ('744093', 546, '2024-11-12'),
+    ('733026', 564, '2024-11-23'),
+    ('773521', 32, '2024-11-30'),
+    ('781428', 7869, '2024-12-14'),
+    ('761722', 435345, '2024-12-21'),
+    ('716844', 34523, '2024-12-24');
