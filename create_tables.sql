@@ -47,3 +47,35 @@ CREATE TABLE
         total_price INT,
         transaction_date DATE
     );
+
+CREATE TABLE 
+	IF NOT EXISTS "ITEM" (
+    item_id SERIAL PRIMARY KEY,
+    item_name VARCHAR(50) NOT NULL,
+    item_category VARCHAR(25),
+    item_rarity VARCHAR(25),
+    item_price NUMERIC(10,0),
+    allowed_classes TEXT[]
+);
+
+CREATE TABLE
+	IF NOT EXISTS "IN_INVENTORY" (
+	character_id VARCHAR(25) NOT NULL,
+	item_id int NOT NULL,
+	quantity int,
+	FOREIGN KEY (character_id) REFERENCES "CHARACTERS"(character_id) ON DELETE CASCADE,
+	FOREIGN KEY (item_id) REFERENCES "ITEM"(item_id) ON DELETE CASCADE
+	);
+
+CREATE TABLE
+	IF NOT EXISTS "LISTING" (
+	listing_id SERIAL PRIMARY KEY,
+	character_id VARCHAR(25) NOT NULL,
+	item_id int NOT NULL,
+	quantity int NOT NULL,
+	listing_date DATE NOT NULL,
+	is_active BOOLEAN,
+	sale_price NUMERIC(10,0),
+	FOREIGN KEY (character_id) REFERENCES "CHARACTERS"(character_id),
+	FOREIGN KEY (item_id) REFERENCES "ITEM"(item_id)
+	);
