@@ -265,3 +265,22 @@ INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_c
 ('Divine Shield', 'Shield', 'Legendary', 1200, ARRAY['4p5q6r789', '5q6r7s890', '1m2n3o456']),
 ('Crown of the Bard King', 'Headgear', 'Legendary', 1000, ARRAY['9u0v1w234']),
 ('Warhammer of the Paladin King', 'Weapon', 'Legendary', 950, ARRAY['5q6r7s890']);
+
+
+INSERT INTO "LISTING" (character_id, item_id, quantity, listing_date, is_active, sale_price) VALUES
+('1a2b3c456', 1, 10, '2024-09-15', TRUE, 150),
+('2b3c4d567', 2, 5, '2024-08-23', TRUE, 350),
+('3c4d5e678', 3, 1, '2024-10-01', FALSE, 1000),
+('4d5e6f789', 4, 2, '2024-09-10', TRUE, 1200),
+('5e6f7g890', 5, 3, '2024-08-30', FALSE, 500),
+('6f7g8h901', 6, 7, '2024-09-25', TRUE, 250),
+('7g8h9i012', 7, 4, '2024-09-02', TRUE, 200),
+('8h9i0j123', 8, 12, '2024-07-20', FALSE, 300),
+('9i0j1k234', 9, 6, '2024-08-29', TRUE, 950),
+('0j1k2l345', 10, 1, '2024-09-18', FALSE, 50),
+('1a2b3c456', 11, 4, '2024-08-15', TRUE, 400),
+('2b3c4d567', 12, 6, '2024-07-28', FALSE, 180),
+('3c4d5e678', 13, 8, '2024-09-30', TRUE, 600),
+('4d5e6f789', 14, 9, '2024-08-25', TRUE, 1000),
+('5e6f7g890', 15, 10, '2024-09-01', FALSE, 800),
+('6f7g8h901', 16, 11, '2024-09-12', TRUE, 50);
