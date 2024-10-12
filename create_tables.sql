@@ -30,3 +30,16 @@ CREATE TABLE
         FOREIGN KEY (character_class) REFERENCES CLASSES (class_id), -- "BELONGS TO" relationship, 1 to 1
         FOREIGN KEY (party_leader) REFERENCES CHARACTERS (character_id) -- "MANAGES" relationship, 1 to N
     );
+
+CREATE TABLE   
+    IF NOT EXISTS "PARTY" (
+        party_name varchar(50) primary key,
+	    party_balance int
+    );
+
+CREATE TABLE 
+    IF NOT EXISTS "TRANSACTION" (
+        transaction_id char(10) primary key,
+        total_price int,
+        transaction_date date
+    );
