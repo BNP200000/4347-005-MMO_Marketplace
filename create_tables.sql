@@ -22,5 +22,7 @@ CREATE TABLE
         exp_level INT,
         character_name VARCHAR(25),
         gold_balance INT,
-        PRIMARY KEY (character_id)
+        owner_id VARCHAR(25) NOT NULL,
+        PRIMARY KEY (character_id),
+        FOREIGN KEY (owner_id) REFERENCES USERS (user_id) -- "OWNS" relationship, 1 to N
     );
