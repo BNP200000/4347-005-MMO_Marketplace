@@ -35,10 +35,11 @@ CREATE TABLE
 
 CREATE TABLE
     IF NOT EXISTS "PARTY" (
-        party_name VARCHAR(50) PRIMARY KEY,
+        party_name VARCHAR(50) UNIQUE,
         party_balance INT,
         party_leader VARCHAR(25),
-        FOREIGN KEY (party_leader) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE
+		PRIMARY KEY (party_leader),
+		FOREIGN KEY (party_leader) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE 
