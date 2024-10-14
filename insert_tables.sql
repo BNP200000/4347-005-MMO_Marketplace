@@ -41,18 +41,18 @@ VALUES
     ('0j1k2l345', 8, 'Kael', 600, '0g1h2i345', '5q6r7s890', '1a2b3c456');
 
 INSERT INTO
-    "PARTY" (party_name, party_balance, party_leader)
+    "PARTY" (party_name, party_leader, party_balance)
 VALUES
-    ('Lyrical', 53422, '1a2b3c456'),
-    ('Arcane', 3234223, '4d5e6f789'),
-    ('Dragon Slayer', 1000, '2b3c4d567'),
-    ('Witch Hunter', 54223, '3c4d5e678'),
-    ('Tuba Gang', 546, '7g8h9i012'),
-    ('Stroopwafel', 564, '0j1k2l345'),
-    ('Birds of Prey', 32, '9i0j1k234'),
-    ('The Fallen', 7869, '6f7g8h901'),
-    ('Masked Fools', 435345, '5e6f7g890'),
-    ('Asgard', 34523, '8h9i0j123');
+    ('Lyrical', '1a2b3c456', 53422),
+	('Arcane', '4d5e6f789', 3234223),
+	('Dragon Slayer', '2b3c4d567', 1000),
+	('Witch Hunter', '3c4d5e678', 54223),
+	('Tuba Gang', '7g8h9i012', 546),
+	('Stroopwafel', '0j1k2l345', 564),
+	('Birds of Prey', '9i0j1k234', 32),
+	('The Fallen', '6f7g8h901', 7869),
+	('Masked Fools', '5e6f7g890', 435345),
+	('Asgard', '8h9i0j123', 34523)
 
 INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_classes) VALUES
 ('Health Potion', 'Consumable', 'Common', 50, ARRAY[
