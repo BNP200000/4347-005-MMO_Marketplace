@@ -29,7 +29,7 @@ CREATE TABLE
         leader_id VARCHAR(25),
         FOREIGN KEY (owner_id) REFERENCES "USER" (user_id) ON DELETE CASCADE ON UPDATE CASCADE, -- "OWNS" relationship, 1 to N
         FOREIGN KEY (character_class) REFERENCES "CLASS" (class_id) ON DELETE CASCADE ON UPDATE CASCADE -- "BELONGS TO" relationship, 1 to 1
-        --FOREIGN KEY (leader_id) REFERENCES "CHARACTER" (character_id) "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE, -- "MANAGES" relationship, 1 to N
+        -- NOTE; The foreign key constraint for "leader_id" is located in "insert_tables.sql" to avoid circular dependency. It relies on "PARTY"'s party_leader.
     );
 
 CREATE TABLE
