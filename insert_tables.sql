@@ -27,7 +27,7 @@ VALUES
     ('0v1w2x345', 'Necromancer', 'Summoner of the dead', 'DPS');
 
 INSERT INTO
-    "CHARACTER" (character_id, exp_level, character_name, gold_balance, owner_id, character_class, party_leader)
+    "CHARACTER" (character_id, exp_level, character_name, gold_balance, owner_id, character_class, leader_id)
 VALUES
     ('1a2b3c456', 5, 'Alduin', 300, '1x2y3z456', '1m2n3o456', NULL),
     ('2b3c4d567', 3, 'Lyria', 150, '2y3z4a567', '2n3o4p567', '1a2b3c456'),
@@ -53,6 +53,10 @@ VALUES
 	('The Fallen', '6f7g8h901', 7869),
 	('Masked Fools', '5e6f7g890', 435345),
 	('Asgard', '8h9i0j123', 34523);
+
+ALTER TABLE "CHARACTER"
+ADD CONSTRAINT FK_leader_id
+FOREIGN KEY (leader_id) REFERENCES "PARTY" (party_leader);
 
 INSERT INTO
     "CHARACTER_FRIEND" (character_a_id, character_b_id)
@@ -99,53 +103,53 @@ INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_c
 ('Warhammer of the Paladin King', 'Weapon', 'Legendary', 950, ARRAY['5q6r7s890']);
 
 
-INSERT INTO "LISTING" (character_id, item_id, quantity, listing_date, is_active, sale_price) VALUES
-('1a2b3c456', 1, 10, '2024-09-15', TRUE, 150),
-('2b3c4d567', 2, 5, '2024-08-23', TRUE, 350),
-('3c4d5e678', 3, 1, '2024-10-01', FALSE, 1000),
-('4d5e6f789', 4, 2, '2024-09-10', TRUE, 1200),
-('5e6f7g890', 5, 3, '2024-08-30', FALSE, 500),
-('6f7g8h901', 6, 7, '2024-09-25', TRUE, 250),
-('7g8h9i012', 7, 4, '2024-09-02', TRUE, 200),
-('8h9i0j123', 8, 12, '2024-07-20', FALSE, 300),
-('9i0j1k234', 9, 6, '2024-08-29', TRUE, 950),
-('0j1k2l345', 10, 1, '2024-09-18', FALSE, 50),
-('1a2b3c456', 11, 4, '2024-08-15', TRUE, 400),
-('2b3c4d567', 12, 6, '2024-07-28', FALSE, 180),
-('3c4d5e678', 13, 8, '2024-09-30', TRUE, 600),
-('4d5e6f789', 14, 9, '2024-08-25', TRUE, 1000),
-('5e6f7g890', 15, 10, '2024-09-01', FALSE, 800),
-('6f7g8h901', 16, 11, '2024-09-12', TRUE, 50);
+INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_price) VALUES
+('1a2b3c456', 10, '2024-09-15', TRUE, 150),
+('2b3c4d567', 5, '2024-08-23', TRUE, 350),
+('3c4d5e678', 1, '2024-10-01', FALSE, 1000),
+('4d5e6f789', 2, '2024-09-10', TRUE, 1200),
+('5e6f7g890', 3, '2024-08-30', FALSE, 500),
+('6f7g8h901', 7, '2024-09-25', TRUE, 250),
+('7g8h9i012', 4, '2024-09-02', TRUE, 200),
+('8h9i0j123', 12, '2024-07-20', FALSE, 300),
+('9i0j1k234', 6, '2024-08-29', TRUE, 950),
+('0j1k2l345', 1, '2024-09-18', FALSE, 50),
+('1a2b3c456', 4, '2024-08-15', TRUE, 400),
+('2b3c4d567', 6, '2024-07-28', FALSE, 180),
+('3c4d5e678', 8, '2024-09-30', TRUE, 600),
+('4d5e6f789', 9, '2024-08-25', TRUE, 1000),
+('5e6f7g890', 10, '2024-09-01', FALSE, 800),
+('6f7g8h901', 11, '2024-09-12', TRUE, 50);
 
-INSERT INTO "IN_INVENTORY" (character_id, item_id, quantity) VALUES
-('1a2b3c456', 1, 32),
-('2b3c4d567', 2, 15),
-('3c4d5e678', 3, 40),
-('4d5e6f789', 4, 22),
-('5e6f7g890', 5, 12),
-('6f7g8h901', 6, 47),
-('7g8h9i012', 7, 29),
-('8h9i0j123', 8, 18),
-('9i0j1k234', 9, 35),
-('0j1k2l345', 10, 41),
-('1a2b3c456', 11, 27),
-('2b3c4d567', 12, 14),
-('3c4d5e678', 13, 38),
-('4d5e6f789', 14, 46),
-('5e6f7g890', 15, 9),
-('6f7g8h901', 16, 44);
+INSERT INTO "IN_INVENTORY" (character_id, quantity) VALUES
+('1a2b3c456', 32),
+('2b3c4d567', 15),
+('3c4d5e678', 40),
+('4d5e6f789', 22),
+('5e6f7g890', 12),
+('6f7g8h901', 47),
+('7g8h9i012', 29),
+('8h9i0j123', 18),
+('9i0j1k234', 35),
+('0j1k2l345', 41),
+('1a2b3c456', 27),
+('2b3c4d567', 14),
+('3c4d5e678', 38),
+('4d5e6f789', 46),
+('5e6f7g890', 9),
+('6f7g8h901', 44);
 
 INSERT INTO
-    "TRANSACTION" (transaction_id, total_price, transaction_date)
+    "TRANSACTION" (transaction_id, seller_id, buyer_id, transaction_date, total_price)
 VALUES
-    ('741966', 53422, '2024-10-22'),
-    ('703221', 3234223, '2024-10-28'),
-    ('703814', 1000, '2024-11-04'),
-    ('772759', 54223, '2024-11-06'),
-    ('744093', 546, '2024-11-12'),
-    ('733026', 564, '2024-11-23'),
-    ('773521', 32, '2024-11-30'),
-    ('781428', 7869, '2024-12-14'),
-    ('761722', 435345, '2024-12-21'),
-    ('716844', 34523, '2024-12-24');
+    ('741966', '1a2b3c456', '2b3c4d567', '2024-10-22', 53422),
+    ('703221', '2b3c4d567', '1a2b3c456', '2024-10-28', 3234223),
+    ('703814', '3c4d5e678', '0j1k2l345', '2024-11-04', 1000),
+    ('772759', '0j1k2l345', '5e6f7g890', '2024-11-06', 54223),
+    ('744093', '2b3c4d567', '5e6f7g890', '2024-11-12', 546),
+    ('733026', '3c4d5e678', '5e6f7g890', '2024-11-23', 564),
+    ('773521', '7g8h9i012', '6f7g8h901', '2024-11-30', 32),
+    ('781428', '8h9i0j123', '0j1k2l345', '2024-12-14', 7869),
+    ('761722', '6f7g8h901', '5e6f7g890', '2024-12-21', 435345),
+    ('716844', '5e6f7g890', '7g8h9i012', '2024-12-24', 34523);
 
