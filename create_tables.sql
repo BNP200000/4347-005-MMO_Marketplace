@@ -65,8 +65,8 @@ CREATE TABLE
         character_id VARCHAR(25) NOT NULL,
         item_id SERIAL NOT NULL,
         quantity int,
-        FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE,
-        FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE
+        FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
@@ -78,8 +78,8 @@ CREATE TABLE
         listing_date DATE NOT NULL,
         is_active BOOLEAN,
         sale_price NUMERIC(10, 0),
-        FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id),
-        FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id)
+        FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
