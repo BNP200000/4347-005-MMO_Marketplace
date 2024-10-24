@@ -3,17 +3,11 @@
 @import '~bootstrap/scss/variables';
 
 // Define your custom colors
-$primary: #D5A125;
-$grey-500: #525252;
-$grey-400: #737373;
-$grey-300: #D4D4D4;
+// $primary: #479ee0;
 
 // Define the new theme colors
 $custom-theme-colors: (
-  "grey-300": $grey-300,
-  "grey-400": $grey-400,
-  "grey-500": $grey-500,
-  "primary": $primary
+  // "primary": $primary
 );
 
 // Merge the default theme colors with your custom ones
