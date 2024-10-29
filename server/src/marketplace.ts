@@ -1,9 +1,9 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
-    user: 'bpham02',
+    user: '<USER>',
     host: 'localhost',
     database: 'MMO_Marketplace',
-    password: 'Platinum32$',
+    password: '<PASSWORD',
     port: 5432
 });
 
