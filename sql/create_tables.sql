@@ -80,6 +80,7 @@ CREATE TABLE
         sale_price NUMERIC(10, 0),
         FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
+		-- FOREIGN KEY (sale_price) REFERENCES "ITEM" (item_price) ON DELETE CASCADE ON UPDATE CASCADE --
     );
 
 CREATE TABLE
@@ -94,3 +95,32 @@ CREATE TABLE
 		FOREIGN KEY (buyer_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (listing_id) REFERENCES "LISTING" (listing_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
+
+-- Caluculate the total price value for the 
+-- TRANSACTION table
+CREATE OR REPLACE FUNCTION calculate_total_price()
+RETURNS TRIGGER AS $$
+BEGIN
+	SELECT listing .quantity * listing.sale_price INTO NEW.total_price
+	FROM "LISTING" as listing
+	WHERE listing.listing_id = NEW.listing_id;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- CREATE trigger if it does not exist
+DO $$
+BEGIN
+	IF NOT EXISTS(
+		SELECT 1 FROM pg_trigger
+		WHERE tgname = 'set_total_price'
+	) THEN 
+		CREATE TRIGGER set_total_price
+		BEFORE INSERT OR UPDATE ON "TRANSACTION"
+		FOR EACH ROW
+		EXECUTE FUNCTION calculate_total_price();
+	END IF;
+END $$;
+
+
+		

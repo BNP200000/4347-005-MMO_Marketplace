@@ -6,17 +6,16 @@ const PORT = process.env.PORT || 5001;
 
 const marketplace = require("./marketplace");
 
-
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req: Request, res: Response) => { 
   marketplace.getUser().then((response) => {
     res.status(200).send(response);
   })
   .catch((error) => {
-    res.status(500).send(error);
-  })
+    console.log(error);
+  });
   //res.status(200).send("Hello from Express!");
 });
 
