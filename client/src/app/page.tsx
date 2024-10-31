@@ -8,7 +8,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <Link href="/pet">Click to go to Pets Page</Link>
-        <Demo />
+        <Demo tableName="ITEM"/>
 
         <div className={styles.ctas}>
           <a

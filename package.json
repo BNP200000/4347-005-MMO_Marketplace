@@ -1,0 +1,15 @@
+{
+  "name": "4347-005-mmo_marketplace",
+  "version": "1.0.0",
+  "description": "1. Run the following in one terminal:\r ```bash\r cd client\r npm i\r npm run dev\r ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react-bootstrap-icons": "^1.11.4"
+  }
+}

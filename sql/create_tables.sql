@@ -53,7 +53,7 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS "ITEM" (
         item_id SERIAL PRIMARY KEY,
-        item_name VARCHAR(50) NOT NULL,
+        item_name VARCHAR(50) NOT NULL UNIQUE,
         item_category VARCHAR(25),
         item_rarity VARCHAR(25),
         item_price NUMERIC(10, 0),
