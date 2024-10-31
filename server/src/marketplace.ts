@@ -1,19 +1,19 @@
-const {Pool} = require('pg')
+const { Pool } = require("pg");
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: '<DATABASE>',
-    password: '<PASSWORD>',
-    port: 5432,
+  user: "postgres",
+  host: "localhost",
+  database: "<DATABASE>",
+  password: "<PASSWORD>",
+  port: 5432,
 });
 
-const getTable = async(tableName: string) => {
-    try {
-        let query = `SELECT * FROM "${tableName}";`;
+const getTable = async (tableName: string) => {
+  try {
+    let query = `SELECT * FROM "${tableName}";`;
 
-        if(tableName === "ITEM") {
-            query = `SELECT 
+    if (tableName === "ITEM") {
+      query = `SELECT 
                 I.item_id, 
                 I.item_name, 
                 I.item_category,
@@ -29,50 +29,51 @@ const getTable = async(tableName: string) => {
                 I.item_rarity,
                 I.item_price
             ORDER BY I.item_id;`;
-        } 
+    }
 
-        const results = await pool.query(query);
-        if(results && results.rows.length > 0) {
-            return results.rows;
-        } else {
-            throw new Error("No results found")
+    const results = await pool.query(query);
+    if (results && results.rows.length > 0) {
+      return results.rows;
+    } else {
+      throw new Error("No results found");
+    }
+  } catch (error) {
+    throw new Error("Internal server error");
+  }
+};
+
+const createRecord = async (tableName: string, data: Record<string, any>) => {
+  const columns = Object.keys(data);
+  const values = Object.values(data);
+
+  if (columns.length === 0 || values.length === 0) {
+    throw new Error("No columns or values provided");
+  }
+
+  const placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
+  const query = `INSERT INTO "${tableName}" (${columns.join(
+    ", "
+  )}) VALUES (${placeholders}) RETURNING *`;
+
+  try {
+    return await new Promise(function (resolve, reject) {
+      pool.query(query, values, (error, results) => {
+        if (error) {
+          reject(error);
+          return;
         }
-    } catch (error) {
-        throw new Error("Internal server error");
-    }
+
+        if (results && results.rows) {
+          resolve(`Added ${JSON.stringify(results.rows[0])} to ${tableName}`);
+        } else {
+          reject(new Error("No results found"));
+        }
+      });
+    });
+  } catch (error) {
+    throw new Error("Internal server error");
+  }
 };
-
-const createRecord = async(tableName: string, data: Record<string, any>) => {
-    const columns = Object.keys(data);
-    const values = Object.values(data);
-
-    if(columns.length === 0 || values.length === 0) {
-        throw new Error("No columns or values provided");
-    }
-
-    const placeholders = columns.map((_, i) => `$${i+1}`).join(', ');
-    const query = `INSERT INTO "${tableName}" (${columns.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-
-    try {
-        return await new Promise(function (resolve, reject) {
-            pool.query(query, values, (error, results) => {
-                if(error) {
-                    reject(error);
-                    return;
-                }
-                
-                if(results && results.rows) {
-                    resolve(`Added ${JSON.stringify(results.rows[0])} to ${tableName}`);
-                } else {
-                    reject(new Error("No results found"));
-                }
-            });
-        });
-    } catch (error) {
-        throw new Error("Internal server error");
-    }
-};
-
 
 /*const createUser = (body) => {
     return new Promise(function (resolve, reject) {
@@ -175,9 +176,8 @@ const deleteUser = (user_id) => {
 };*/
 
 module.exports = {
-    getTable,
-    createRecord,
-    //createUser,
-    //deleteUser
+  getTable,
+  createRecord,
+  //createUser,
+  //deleteUser
 };
-
