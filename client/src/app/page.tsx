@@ -1,14 +1,50 @@
+"use client"; // this is important
+
 import Image from "next/image";
 import styles from "./page.module.css";
 import Demo from "@/components/Demo";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const tables = [
+    "USER", "CLASS", "CHARACTER", "PARTY",
+    "CHARACTER_FRIEND", "IN_INVENTORY", "ITEM", 
+    "LISTING", "TRANSACTION"
+  ];
+
+  const [table, setTable] = useState("USER");
+
+  const handleTableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTable(event.target.value);
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <Link href="/pet">Click to go to Pets Page</Link>
-        <Demo tableName="ITEM"/>
+
+        <div>
+          <label htmlFor="table-select" style={{marginRight:"8px"}}>
+            Select Table:
+          </label>
+          <select 
+            id="table-select"
+            value={table}
+            onChange={handleTableChange}
+          >
+            {tables.map((table) => (
+              <option key={table} value={table}>
+                {table}
+              </option>
+            ))};  
+              
+            
+          </select> 
+          
+        </div>
+
+        <Demo tableName={table}/>
 
         <div className={styles.ctas}>
           <a

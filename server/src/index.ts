@@ -28,10 +28,13 @@ app.post("/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   const data = req.body;
 
-  if(!data) {
+  // Check if the request body is empty
+  if(!data || typeof data === "object" && Object.keys(data).length === 0) {
     res.status(400).json({error: "Request body cannot be empty"});
   }
 
+  // Insert new record into the table if it does not exist
+  // Otherwise, reject it
   marketplace.createRecord(table, data).then((response) => {
     res.status(201).json(response);
   })

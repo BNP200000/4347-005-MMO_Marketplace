@@ -3,8 +3,8 @@ const {Pool} = require('pg')
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: '<DATABASE>',
-    password: '<PASSWORD>',
+    database: 'MMO_Marketplace',
+    password: 'Platinum32$',
     port: 5432,
 });
 
@@ -12,6 +12,7 @@ const getTable = async(tableName: string) => {
     try {
         let query = `SELECT * FROM "${tableName}";`;
 
+        // Pretty-display the ITEM table
         if(tableName === "ITEM") {
             query = `SELECT 
                 I.item_id, 
@@ -29,7 +30,7 @@ const getTable = async(tableName: string) => {
                 I.item_rarity,
                 I.item_price
             ORDER BY I.item_id;`;
-        } 
+        }
 
         const results = await pool.query(query);
         if(results && results.rows.length > 0) {
