@@ -1,12 +1,4 @@
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "<DATABASE>",
-  password: "<PASSWORD>",
-  port: 5432,
-});
+import pool from "./dbConfig";
 
 const getTable = async (tableName: string) => {
   try {
