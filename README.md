@@ -2,21 +2,23 @@
 
 # Instructions for running the project
 
-1. Run the following in one terminal:
+1. In "server/src/dbConfig.ts", change the <DATABASE> and <PASSWORD> to the correct fields for your local environment.
+
+2. Run the following in one terminal:
 ```bash
 cd client
 npm i
 npm run dev
 ```
 
-Then, in a new terminal:
+3. Then, in a new terminal:
 ```bash
 cd server
 npm i
 npm start
 ```
 
-Now, go to http://localhost:3000/
+4. Now, go to http://localhost:3000/
 
 
 ## Here are some helpful development resources:
