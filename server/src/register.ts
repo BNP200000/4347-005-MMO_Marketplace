@@ -44,23 +44,22 @@ const registerNewUser = (body) => {
   });
 };
 
-const deleteUser = (user_id) => {
-  return new Promise(function (resolve, reject) {
-    pool.query(
-      'DELETE FROM "USER" WHERE user_id = $1',
-      [user_id],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
+// const deleteUser = (user_id) => {
+//   return new Promise(function (resolve, reject) {
+//     pool.query(
+//       'DELETE FROM "USER" WHERE user_id = $1',
+//       [user_id],
+//       (error, results) => {
+//         if (error) {
+//           reject(error);
+//         }
 
-        resolve(`User deleted with ID: ${user_id}`);
-      }
-    );
-  });
-};
+//         resolve(`User deleted with ID: ${user_id}`);
+//       }
+//     );
+//   });
+// };
 
 module.exports = {
   registerNewUser,
-  deleteUser,
 };
