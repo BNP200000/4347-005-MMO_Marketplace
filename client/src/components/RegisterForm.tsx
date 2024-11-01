@@ -4,6 +4,9 @@ import { Form, Button, Alert } from "react-bootstrap";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setLoginCookie } from "@/utils/loginCookie";
+import axios from "axios";
+
+const PORT = process.env.PORT || 5001;
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -12,7 +15,7 @@ export default function RegisterForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Basic validation
@@ -24,6 +27,11 @@ export default function RegisterForm() {
     // Set the registration data in the cookie
     setLoginCookie({ username, password });
 
+    await axios.post(`http://localhost:${PORT}/register`, {
+      username,
+      email,
+      password,
+    });
     // Redirect
     router.push("/");
   };

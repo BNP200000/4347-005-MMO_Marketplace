@@ -19,9 +19,7 @@ export function middleware(request: NextRequest) {
   const isLoginOrRegisterPage =
     request.nextUrl.pathname === "/login" ||
     request.nextUrl.pathname === "/register";
-  console.log("MIDDLEWARE: ", request.url);
   const userLoginCookie = request.cookies.get("user_login");
-  console.log("COOKIE: ", userLoginCookie);
 
   // If cookie is missing or invalid, redirect to the login page
   if (!userLoginCookie) {

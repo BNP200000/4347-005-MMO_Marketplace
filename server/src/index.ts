@@ -40,6 +40,16 @@ app.post("/:table", (req: Request, res: Response) => {
   });
 });
 
+app.post("/user", (req: Request, res: Response) => {
+  const body = req.body;
+  marketplace.registerNewUser(body).then((response) => {
+    res.status(201).json(response);
+  })
+  .catch((error) => {
+    res.status(500).json({error: "Internal server error"});
+  });
+});
+
 
 
 app.listen(PORT, () => {
