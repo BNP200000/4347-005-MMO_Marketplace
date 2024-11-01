@@ -5,7 +5,6 @@ const COOKIE_NAME = "user_login";
 type LoginData = {
   username: string;
   password: string;
-  email: string;
 };
 
 export const setLoginCookie = (data: LoginData, expiresInDays: number = 7) => {

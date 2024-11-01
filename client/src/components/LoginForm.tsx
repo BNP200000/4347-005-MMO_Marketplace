@@ -8,25 +8,23 @@ import { useRouter } from "next/navigation";
 export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password || !email) {
+    if (!username || !password) {
       setError("All fields are required.");
       return;
     }
 
     // Save login data to the cookie
-    setLoginCookie({ username, password, email });
+    setLoginCookie({ username, password });
 
     // Reset the form or redirect to a new page
     setUsername("");
     setPassword("");
-    setEmail("");
     setError(null);
 
     // Redirect
@@ -45,16 +43,6 @@ export default function LoginForm() {
           placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formBasicEmail">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          type="email"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
         />
       </Form.Group>
 

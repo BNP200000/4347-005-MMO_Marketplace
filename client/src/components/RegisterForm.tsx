@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Cookies from "js-cookie";
 import { Form, Button, Alert } from "react-bootstrap";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { setLoginCookie } from "@/utils/loginCookie";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -22,9 +22,7 @@ export default function RegisterForm() {
     }
 
     // Set the registration data in the cookie
-    Cookies.set("user_login", JSON.stringify({ username, password, email }), {
-      expires: 7, // Set cookie to expire in 7 days
-    });
+    setLoginCookie({ username, password });
 
     // Redirect
     router.push("/");
