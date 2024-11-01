@@ -16,12 +16,18 @@ export const config = {
 };
 
 export function middleware(request: NextRequest) {
+  const isLoginOrRegisterPage =
+    request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname === "/register";
   console.log("MIDDLEWARE: ", request.url);
   const userLoginCookie = request.cookies.get("user_login");
   console.log("COOKIE: ", userLoginCookie);
 
   // If cookie is missing or invalid, redirect to the login page
   if (!userLoginCookie) {
+    if (isLoginOrRegisterPage) {
+      return NextResponse.next(); // stay
+    }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -38,10 +44,7 @@ export function middleware(request: NextRequest) {
   }
 
   // if on login or register page and we have the cookie, redirect to home
-  if (
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/register"
-  ) {
+  if (isLoginOrRegisterPage) {
     return NextResponse.redirect(new URL("/", request.url));
   }
   // If the user is authenticated, continue to the requested page

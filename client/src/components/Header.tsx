@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Nav, Navbar } from "react-bootstrap";
+import { removeLoginCookie } from "@/utils/loginCookie";
 
 export default function Header() {
   const router = useRouter();
@@ -47,8 +48,9 @@ export default function Header() {
         <div className="d-flex align-items-center">
           <Button
             variant="primary"
-            className="d-none d-lg-block me-3"
-            onClick={() => console.log("TODO")}
+            onClick={() => {
+              removeLoginCookie();
+            }}
           >
             Logout
           </Button>
