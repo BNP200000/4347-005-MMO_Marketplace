@@ -24,16 +24,26 @@ export default function RegisterForm() {
       return;
     }
 
-    // Set the registration data in the cookie
-    setLoginCookie({ username, password });
-
-    await axios.post(`http://localhost:${PORT}/register`, {
-      username,
-      email,
-      password,
-    });
-    // Redirect
-    router.push("/");
+    await axios
+      .post(`http://localhost:${PORT}/register`, {
+        username,
+        email,
+        password,
+      })
+      .then((res) => {
+        // Check for errors
+        if (res.data.error) {
+          setErrorMessage(res.data.error);
+          return;
+        }
+        // Set the registration data in the cookie
+        setLoginCookie({ username, password });
+        // Redirect
+        router.push("/");
+      })
+      .catch(() => {
+        setErrorMessage("An error occurred. Please try again.");
+      });
   };
 
   return (

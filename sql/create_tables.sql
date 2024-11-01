@@ -1,9 +1,9 @@
 CREATE TABLE
     IF NOT EXISTS "USER" (
         user_id VARCHAR(50) PRIMARY KEY,
-        username VARCHAR(50) NOT NULL,
+        username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(50) NOT NULL,
-        email VARCHAR(50),
+        email VARCHAR(50) UNIQUE,
         account_type VARCHAR(50),
         has_free_chat BOOLEAN,
         has_safe_chat BOOLEAN,
