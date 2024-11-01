@@ -11,12 +11,14 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!api|login|register|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
 
 export function middleware(request: NextRequest) {
+  console.log("MIDDLEWARE: ", request.url);
   const userLoginCookie = request.cookies.get("user_login");
+  console.log("COOKIE: ", userLoginCookie);
 
   // If cookie is missing or invalid, redirect to the login page
   if (!userLoginCookie) {
@@ -27,7 +29,7 @@ export function middleware(request: NextRequest) {
     const loginData = JSON.parse(userLoginCookie.value);
 
     // If any required field is missing in the cookie, redirect to login
-    if (!loginData.username || !loginData.password || !loginData.email) {
+    if (!loginData.username || !loginData.password) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   } catch {
@@ -35,6 +37,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // if on login or register page and we have the cookie, redirect to home
+  if (
+    request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname === "/register"
+  ) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
   // If the user is authenticated, continue to the requested page
   return NextResponse.next();
 }

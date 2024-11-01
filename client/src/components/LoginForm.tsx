@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import Link from "next/link";
 import { setLoginCookie } from "@/utils/loginCookie";
@@ -9,6 +9,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,14 +23,15 @@ export default function LoginForm() {
     // Save login data to the cookie
     setLoginCookie({ username, password });
 
-    // Reset the form or redirect to a new page
-    setUsername("");
-    setPassword("");
-    setError(null);
-
-    // Redirect
-    router.push("/");
+    // Set login state to trigger useEffect
+    setIsLoggedIn(true);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <Form onSubmit={handleSubmit}>
