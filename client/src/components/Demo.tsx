@@ -56,13 +56,25 @@ export default function Demo({tableName}: TableProp) {
 
   // Handle POST request
   const handleInsert = () => {
+    const formattedData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key, (
+          value?.toLowerCase() === "null" || value === "") 
+            ? null
+            : isNaN(value) || typeof value !== "string"
+              ? value
+              : Number(value)
+      ])
+    );
+
     axios
-      .post(`http://localhost:${PORT}/${tableName}`, formData)
+      .post(`http://localhost:${PORT}/${tableName}`, formattedData)
       .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
       .catch((err) => {
+        console.log(`FAILED: ${JSON.stringify(formattedData)}`);
         setError(err);
       })
   }

@@ -118,24 +118,100 @@ const getTable = async (tableName: string, displayFormat: string) => {
   }
 };
 
+const getUserId = async (username: string) => {
+  const res = await pool.query(
+      `SELECT user_id FROM "USER" WHERE username = $1`, 
+      [username]
+  );
+  if(res.rows.length === 0) {
+    throw new Error(`User ${username} does not exist`);
+  }
+  return res.rows[0].user_id;
+};
+
+const getClassId = async (classname: string) => {
+  const res = await pool.query(
+      `SELECT class_id FROM "CLASS" WHERE class_name = $1`, 
+      [classname]
+  );
+  if(res.rows.length === 0) {
+    throw new Error(`Class ${classname} does not exist`);
+  }
+  return res.rows[0].class_id;
+};
+
 const createRecord = async (tableName: string, data: Record<string, any>) => {
-  const columns = Object.keys(data);
-  const values = Object.values(data);
+  console.log(`INSERTING into ${tableName}`);
+  
+  let columns = Object.keys(data);
+  let values = Object.values(data);
 
   if (columns.length === 0 || values.length === 0) {
     throw new Error("No columns or values provided");
   }
 
-  const placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
-  const query = `INSERT INTO "${tableName}" (${columns.join(
-    ", "
-  )}) VALUES (${placeholders}) RETURNING *`;
-
   try {
+    let placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
+    let query = `INSERT INTO "${tableName}"
+                  (${columns.join(", ")}) 
+                  VALUES (${placeholders}) 
+                  RETURNING *`;
+
+    if(tableName === "CHARACTER") {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+
+      const ownerIdx = columns.indexOf("owner");
+      if(ownerIdx !== -1) {
+        const ownerName = values[ownerIdx];
+        const ownerId = await getUserId(ownerName);
+        insertValues[ownerIdx] = ownerId;
+      }
+
+      const classIdx = columns.indexOf("class");
+      if(classIdx !== -1) {
+        const className = values[classIdx];
+        const classId = await getClassId(className);
+        insertValues[classIdx] = classId;
+      }
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues;
+    } else if(tableName === "PARTY") {
+      const nameIdx = columns.indexOf("party_leader");
+      if(nameIdx === -1) {
+        throw new Error("party_leader must be specified");
+      }
+
+      const leaderName = values[nameIdx];
+      const getLeaderIdQuery = `SELECT character_id 
+                                FROM "CHARACTER" 
+                                WHERE character_name = $1;`;
+      const leaderRes = await pool.query(getLeaderIdQuery, [leaderName]);
+      if(leaderRes.rowCount === 0) {
+        throw new Error(`Character ${leaderName} does not exist in the "CHARACTER" table`);
+      }
+
+      const leaderId = leaderRes.rows[0].character_id;
+      const insertCols = columns.filter((col) => col !== "party_leader");
+      values = values.filter((_, i) => columns[i] !== "party_leader");
+      values.unshift(leaderId);
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders}) 
+                RETURNING *`;
+    }
+
     return await new Promise(function (resolve, reject) {
       pool.query(query, values, (error, results) => {
         if (error) {
-          reject(error);
+          reject("TEST");
           return;
         }
 

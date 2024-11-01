@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, response, Response } from "express";
 import cors from "cors";
 const marketplace = require("./marketplace");
 
@@ -14,6 +14,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 // ROUTES
+
+// QUERY
 app.get("/:table", (req: Request, res: Response) => { 
   const table = req.params.table;
   marketplace.getTable(table).then((response) => {
@@ -24,6 +26,7 @@ app.get("/:table", (req: Request, res: Response) => {
   });
 });
 
+// INSERT
 app.post("/:table", (req: Request, res: Response) => { 
   const table = req.params.table;
   const data = req.body;
@@ -39,11 +42,20 @@ app.post("/:table", (req: Request, res: Response) => {
     res.status(201).json(response);
   })
   .catch((error) => {
-    res.status(500).json({error: "Duplicate record"});
+    console.error(`Response was: ${error}`);
+    res.status(500).json({error: "Internal server error"});
   });
 });
 
+// UPDATE
+app.put("/:table", (req: Request, res: Response) => {
 
+});
+
+// DELETE
+app.delete("/:table", (req: Request, res: Response) => {
+
+}); 
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
