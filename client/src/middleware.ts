@@ -6,16 +6,16 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
+     * - login, register (login and register pages)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|login|register|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
 
 export function middleware(request: NextRequest) {
-  console.warn("Middleware executing.");
   const userLoginCookie = request.cookies.get("user_login");
 
   // If cookie is missing or invalid, redirect to the login page

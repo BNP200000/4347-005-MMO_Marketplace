@@ -1,4 +1,4 @@
-// LoginForm.tsx
+"use client";
 import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import Link from "next/link";
