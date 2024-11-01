@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { registerNewUser } from "./register";
 const marketplace = require("./marketplace");
 
 const app = express();
@@ -14,6 +13,7 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use("/login", require("./login"));
+app.use("/register", require("./register"));
 
 // ROUTES
 app.get("/table/:table", (req: Request, res: Response) => {
@@ -43,18 +43,6 @@ app.post("/table/:table", (req: Request, res: Response) => {
     })
     .catch((error) => {
       res.status(500).json({ error: "Duplicate record" });
-    });
-});
-
-app.post("/register", (req: Request, res: Response) => {
-  const body = req.body;
-  registerNewUser(body)
-    .then((response) => {
-      res.status(201).json(response);
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).json({ error: error });
     });
 });
 
