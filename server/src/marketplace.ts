@@ -1,11 +1,47 @@
 import pool from "./dbConfig";
 
-const getTable = async (tableName: string) => {
-  try {
+// Format QUERY display for certain tables
+const formatQuery = (tableName: string) => {
     let query = `SELECT * FROM "${tableName}";`;
 
-        // Pretty-display the ITEM table
-        if(tableName === "ITEM") {
+    switch(tableName) {
+        case "CHARACTER":
+            query = `SELECT
+                C.character_id,
+                C.exp_level,
+                C.character_name,
+                C.gold_balance,
+                U.username as owner, 
+                P.class_name as class,
+                L.character_name as leader
+            FROM "${tableName}" AS C
+            LEFT JOIN
+                "USER" AS U ON U.user_id = C.owner_id
+            LEFT JOIN
+                "CLASS" AS P ON P.class_id = C.character_class
+            LEFT JOIN   
+                "CHARACTER" AS L ON L.character_id = C.leader_id;`;
+            break;
+        case "PARTY":
+            query = `SELECT 
+                P.party_name,
+                C.character_name as party_leader,
+                P.party_balance
+            FROM "${tableName}" AS P
+            LEFT JOIN
+                "CHARACTER" AS C ON C.character_id = P.party_leader;`;
+            break;
+        case "CHARACTER_FRIEND":
+            query = `SELECT
+                A.character_name AS character,
+                B.character_name AS friend
+            FROM "${tableName}" AS F
+            LEFT JOIN
+                "CHARACTER" AS A ON F.character_a_id = A.character_id
+            LEFT JOIN
+                "CHARACTER" AS B ON F.character_b_id = b.character_id;`;
+            break;
+        case "ITEM":
             query = `SELECT 
                 I.item_id, 
                 I.item_name, 
@@ -22,8 +58,55 @@ const getTable = async (tableName: string) => {
                 I.item_rarity,
                 I.item_price
             ORDER BY I.item_id;`;
-        }
+            break;
+        case "IN_INVENTORY":
+            query = `SELECT
+                C.character_name AS character,
+                I.item_name AS item,
+                V.quantity
+            FROM "${tableName}" AS V
+            LEFT JOIN 
+                "CHARACTER" AS C ON C.character_id = V.character_id
+            LEFT JOIN
+                "ITEM" AS I ON I.item_id = V.item_id;`;
+            break;
+        case "LISTING":
+            query = `SELECT
+                L.listing_id,
+                C.character_name AS character,
+                I.item_name AS item,
+                L.quantity,
+                L.listing_date,
+                L.is_active,
+                L.sale_price
+            FROM "${tableName}" AS L
+            LEFT JOIN
+                "CHARACTER" AS C ON C.character_id = L.character_id
+            LEFT JOIN
+                "ITEM" AS I ON I.item_id = L.item_id;`;
+            break;
+        case "TRANSACTION":
+            query = `SELECT
+                T.transaction_id,
+                T.listing_id,
+                S.character_name as seller,
+                B.character_name as buyer,
+                T.total_price,
+                T.transaction_date
+            FROM "${tableName}" AS T
+            LEFT JOIN
+                "CHARACTER" AS S ON S.character_id = T.seller_id
+            LEFT JOIN
+                "CHARACTER" AS B ON B.character_id = T.buyer_id;`;
+            break;
+    }
 
+    return query;
+}
+
+const getTable = async (tableName: string, displayFormat: string) => {
+  try {
+    const query = formatQuery(tableName);
     const results = await pool.query(query);
     if (results && results.rows.length > 0) {
       return results.rows;
@@ -67,106 +150,6 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
     throw new Error("Internal server error");
   }
 };
-
-/*const createUser = (body) => {
-    return new Promise(function (resolve, reject) {
-        const {
-            user_id, username, email, 
-            password, account_type, 
-            has_free_chat, has_safe_chat, 
-            has_safe_server_access} = body;
-        pool.query(
-            `INSERT INTO USER \
-            (user_id, username, email, password, account_type, \
-            has_free_chat, has_safe_chat, has_safe_server_access) \
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            [user_id, username, email, password, account_type, 
-                has_free_chat, has_safe_chat, 
-                has_safe_server_access],
-            (error, results) => {
-                if(error) {
-                    reject(error);
-                }
-                    
-                if(results && results.rows) {
-                    resolve(
-                        `A new user has been added: ${JSON.stringify(results.rows[0])}`
-                    )
-                } else {
-                    reject(new Error("No results found"));
-                }
-            }
-        );
-    });
-};
-
-
-const deleteUser = (user_id) => {
-    return new Promise(function (resolve, reject) {
-        pool.query(
-            "DELETE FROM \"USER\" WHERE user_id = $1",
-            [user_id],
-            (error, results) => {
-                if(error) {
-                    reject(error);
-                }
-
-                resolve(`User deleted with ID: ${user_id}`);
-            }
-        );
-    });
-};
-
-
-//  USER table
-// CREATE USER
-/*const createUser = (body) => {
-    return new Promise(function (resolve, reject) {
-        const {
-            user_id, username, email, 
-            password, account_type, 
-            has_free_chat, has_safe_chat, 
-            has_safe_server_access} = body;
-        pool.query(
-            "INSERT INTO \"USER\" \
-            (user_id, username, email, password, account_type, \
-            has_free_chat, has_safe_chat, has_safe_server_access) \
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-            [user_id, username, email, password, account_type, 
-                has_free_chat, has_safe_chat, 
-                has_safe_server_access],
-            (error, results) => {
-                if(error) {
-                    reject(error);
-                }
-                    
-                if(results && results.rows) {
-                    resolve(
-                        `A new user has been added: ${JSON.stringify(results.rows[0])}`
-                    )
-                } else {
-                    reject(new Error("No results found"));
-                }
-            }
-        );
-    });
-};
-
-const deleteUser = (user_id) => {
-    return new Promise(function (resolve, reject) {
-        pool.query(
-            "DELETE FROM \"USER\" WHERE user_id = $1",
-            [user_id],
-            (error, results) => {
-                if(error) {
-                    reject(error);
-                }
-
-                resolve(`User deleted with ID: ${user_id}`);
-            }
-        );
-    });
-};*/
 
 module.exports = {
   getTable,

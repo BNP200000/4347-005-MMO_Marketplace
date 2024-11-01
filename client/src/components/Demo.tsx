@@ -34,7 +34,15 @@ export default function Demo({tableName}: TableProp) {
         setMessage(`Successfully fetched ${tableName}`);
 
         const initForm = res.data.length > 0 ? Object.keys(res.data[0]).reduce((acc, col) => {
-          acc[col] = "";
+          const value = res.data[0][col];
+
+          if(typeof value === "boolean" || Array.isArray(value)) {
+            acc[col] = value;
+          } else if(col === "allowed_classes" && typeof value === "string") {
+            acc[col] = value.split(',').map(item => item.trim());
+          } else {
+            acc[col] = "";
+          }
           return acc;
         }, {} as {[key: string]: any}) : {};
         setFormData(initForm);
@@ -46,12 +54,52 @@ export default function Demo({tableName}: TableProp) {
       });
   };
 
+  // Handle POST request
+  const handleInsert = () => {
+    axios
+      .post(`http://localhost:${PORT}/${tableName}`, formData)
+      .then((res) => {
+        setMessage(`Successfully inserted into ${tableName}`);
+        handleQuery(); // Refresh the table data
+      })
+      .catch((err) => {
+        setError(err);
+      })
+  }
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    const {name, type, checked, value} = e.target;
+    setFormData((prevData) => {
+      return {
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }
+    })
+    /*if(name === "allowed_classes") {
+      setFormData((prevData) => {
+        const currentClasses = prevData.allowed_classes || [];
+        if(checked) {
+          // Add the class to the allowed_ckass
+          return {
+            ...prevData,
+            allowed_classes: [...new Set([currentClasses, value])],
+          };
+        } else {
+          return {
+            ...prevData,
+            allowed_classes: currentClasses,
+          }
+        }
+      })
+    } else {
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [name]: type === "checkbox" ? checked : value,
+        }
+      })
+    }*/
+
   };
 
   // Format the table values
@@ -68,48 +116,75 @@ export default function Demo({tableName}: TableProp) {
 
   // Display the table
   const tableData = table.length > 0 ? (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          {columns.map((col) => (
-            <th key={col}>{col}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {table.map((row, index) => (
-          <tr key={index}>
+    <>
+      {/*<h6>INSERT {tableName}</h6>*/}
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr>
             {columns.map((col) => (
-              <td key={col}>
-                {format(row[col])}
-              </td>
+              <th key={col}>{col}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {table.map((row, index) => (
+            <tr key={index}>
+              {columns.map((col) => (
+                <td key={col}>
+                  {format(row[col])}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </>
   ) : (
     <p>No data available for this table.</p>
   );
 
   const displayForm = showForm && (
     <Form>
-      <h6>INSERT {tableName}</h6>
       {columns
         .filter(col => !filterOut.includes(col))
-        .map((col) => (
-        <Form.Group controlId={`form${col}`} key={col}>
-          <Form.Label></Form.Label>
-          <Form.Control
-            type="text"
-            placeholder={`Enter ${col}`}
-            name={col}
-            value={formData[col] || ""}
-            onChange={handleInput}
-            required
-          />
-        </Form.Group>
-      ))}
+        .map((col) => {
+          return (
+            <Form.Group controlId={`form${col}`} key={col}>
+              <Form.Label>{col}</Form.Label>
+              {Array.isArray(formData[col]) ? (
+                formData[col].map((item) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={item}
+                    name={col}
+                    key={item}
+                    value={formData[col]?.includes(item)}
+                    onChange={handleInput}
+                  />
+                ))
+              ) : typeof formData[col] === "boolean" ? (
+                <Form.Check 
+                  type="checkbox"
+                  label={col}
+                  name={col}
+                  checked={formData[col]}
+                  onChange={handleInput}
+                  required
+                />
+              ) : (
+                <Form.Control
+                  type="text"
+                  placeholder={`Enter ${col}`}
+                  name={col}
+                  value={formData[col] || ""}
+                  onChange={handleInput}
+                  required
+                />
+              )}
+            </Form.Group>
+          );
+        }
+      )}
     </Form>
   );
 
@@ -137,7 +212,7 @@ export default function Demo({tableName}: TableProp) {
       <Container>
         <Row>
           <Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>
-          <Col><Button variant="primary">INSERT</Button></Col>
+          <Col><Button variant="primary" onClick={handleInsert}>INSERT</Button></Col>
           <Col><Button variant="primary">DELETE</Button></Col>
           <Col><Button variant="primary">UPDATE</Button></Col>
         </Row>

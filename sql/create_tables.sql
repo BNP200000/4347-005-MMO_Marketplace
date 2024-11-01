@@ -21,9 +21,9 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS "CHARACTER" (
         character_id VARCHAR(25) PRIMARY KEY,
-		exp_level INT,
+		exp_level INT CHECK(exp_level >= 0),
 		character_name VARCHAR(25), 
-        gold_balance INT,
+        gold_balance INT CHECK(gold_balance >= 0),
         owner_id VARCHAR(25) NOT NULL,
         character_class VARCHAR(25),
         leader_id VARCHAR(25),
@@ -45,7 +45,7 @@ CREATE TABLE
     IF NOT EXISTS "PARTY" (
         party_name VARCHAR(50) UNIQUE,
         party_leader VARCHAR(25) UNIQUE,
-        party_balance INT,
+        party_balance INT CHECK(party_balance >= 0),
         PRIMARY KEY (party_name, party_leader),
         FOREIGN KEY (party_leader) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -56,7 +56,7 @@ CREATE TABLE
         item_name VARCHAR(50) NOT NULL UNIQUE,
         item_category VARCHAR(25),
         item_rarity VARCHAR(25),
-        item_price NUMERIC(10, 0),
+        item_price NUMERIC(10, 0) CHECK(item_price > 0),
         allowed_classes TEXT[]
     );
 
@@ -65,6 +65,7 @@ CREATE TABLE
         character_id VARCHAR(25) NOT NULL,
         item_id SERIAL NOT NULL,
         quantity int,
+		PRIMARY KEY (character_id, item_id),
         FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -74,10 +75,10 @@ CREATE TABLE
         listing_id SERIAL PRIMARY KEY,
         character_id VARCHAR(25) NOT NULL,
         item_id SERIAL NOT NULL,
-        quantity int NOT NULL,
+        quantity int NOT NULL CHECK(quantity >= 0),
         listing_date DATE NOT NULL,
         is_active BOOLEAN,
-        sale_price NUMERIC(10, 0),
+        sale_price NUMERIC(10, 0) CHECK(sale_price >= 0),
         FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
 		-- FOREIGN KEY (sale_price) REFERENCES "ITEM" (item_price) ON DELETE CASCADE ON UPDATE CASCADE --
@@ -96,8 +97,7 @@ CREATE TABLE
         FOREIGN KEY (listing_id) REFERENCES "LISTING" (listing_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
--- Caluculate the total price value for the 
--- TRANSACTION table
+-- Caluculate the total price value for the TRANSACTION table
 CREATE OR REPLACE FUNCTION calculate_total_price()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -119,6 +119,30 @@ BEGIN
 		BEFORE INSERT OR UPDATE ON "TRANSACTION"
 		FOR EACH ROW
 		EXECUTE FUNCTION calculate_total_price();
+	END IF;
+END $$;
+
+-- Update total_price when TRANSACTION is updated
+CREATE OR REPLACE FUNCTION update_total_price()
+RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE "TRANSACTION"
+	SET total_price = NEW.quantity * NEW.sale_price
+	WHERE listing_id = NEW.listing_id;
+	RETURN NEW;
+END; 
+$$ LANGUAGE plpgsql;
+
+DO $$
+BEGIN
+	IF NOT EXISTS(
+		SELECT 1 FROM pg_trigger
+		WHERE tgname = 'update_total_price'
+	) THEN
+		CREATE TRIGGER update_total_price
+		AFTER UPDATE OF quantity, sale_price ON "LISTING"
+		FOR EACH ROW
+		EXECUTE FUNCTION update_total_price();
 	END IF;
 END $$;
 

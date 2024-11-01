@@ -7,12 +7,12 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
+  // List of tables to display
   const tables = [
     "USER", "CLASS", "CHARACTER", "PARTY",
-    "CHARACTER_FRIEND", "IN_INVENTORY", "ITEM", 
+    "CHARACTER_FRIEND", "ITEM", "IN_INVENTORY", 
     "LISTING", "TRANSACTION"
   ];
-
   const [table, setTable] = useState("USER");
 
   const handleTableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -37,9 +37,7 @@ export default function Home() {
               <option key={table} value={table}>
                 {table}
               </option>
-            ))};  
-              
-            
+            ))}; 
           </select> 
           
         </div>
