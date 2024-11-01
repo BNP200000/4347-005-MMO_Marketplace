@@ -1,22 +1,49 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+const marketplace = require("./marketplace");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const marketplace = require("./marketplace");
+const corsOptions = {
+  origin: true, // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
+};
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
+app.use("/login", require("./login"));
+app.use("/register", require("./register"));
 
-app.get("/", (req: Request, res: Response) => { 
-  marketplace.getUser().then((response) => {
-    res.status(200).send(response);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-  //res.status(200).send("Hello from Express!");
+// ROUTES
+app.get("/table/:table", (req: Request, res: Response) => {
+  const table = req.params.table;
+  marketplace
+    .getTable(table)
+    .then((response) => {
+      res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+app.post("/table/:table", (req: Request, res: Response) => {
+  const table = req.params.table;
+  const data = req.body;
+
+  if (!data) {
+    res.status(400).json({ error: "Request body cannot be empty" });
+  }
+
+  marketplace
+    .createRecord(table, data)
+    .then((response) => {
+      res.status(201).json(response);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Duplicate record" });
+    });
 });
 
 app.listen(PORT, () => {
