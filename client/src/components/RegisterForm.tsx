@@ -1,82 +1,79 @@
 "use client";
 import { useState } from "react";
+import Cookies from "js-cookie";
 import { Form, Button, Alert } from "react-bootstrap";
 import Link from "next/link";
-import { setLoginCookie } from "@/utils/loginCookie";
 import { useRouter } from "next/navigation";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
     if (!username || !password || !email) {
-      setError("All fields are required.");
+      setErrorMessage("All fields are required.");
       return;
     }
 
-    // Save login data to the cookie
-    setLoginCookie({ username, password, email });
-
-    // Reset the form or redirect to a new page
-    setUsername("");
-    setPassword("");
-    setEmail("");
-    setError(null);
+    // Set the registration data in the cookie
+    Cookies.set("user_login", JSON.stringify({ username, password, email }), {
+      expires: 7, // Set cookie to expire in 7 days
+    });
 
     // Redirect
     router.push("/");
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <h2>Login</h2>
+    <Form onSubmit={handleRegister}>
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+      <h2>Register</h2>
 
-      <Form.Group controlId="formBasicUsername">
+      <Form.Group controlId="formUsername">
         <Form.Label>Username</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter username"
         />
       </Form.Group>
 
-      <Form.Group controlId="formBasicEmail">
+      <Form.Group controlId="formEmail">
         <Form.Label>Email</Form.Label>
         <Form.Control
           type="email"
-          placeholder="Enter email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter email"
         />
       </Form.Group>
 
-      <Form.Group controlId="formBasicPassword">
+      <Form.Group controlId="formPassword">
         <Form.Label>Password</Form.Label>
         <Form.Control
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
         />
       </Form.Group>
 
       <Button variant="primary" type="submit" className="w-100 mt-3">
-        Login
+        Register
       </Button>
 
       <Form.Text
         className="text-center"
         style={{ display: "block", marginTop: "10px" }}
       >
-        <Link href="/register">{"Don't have an account?"}</Link>
+        <Link href="/login">{"Already have an account?"}</Link>
       </Form.Text>
     </Form>
   );

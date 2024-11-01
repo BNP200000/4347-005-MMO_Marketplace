@@ -1,4 +1,4 @@
-import LoginForm from "@/components/LoginForm";
+import RegisterForm from "@/components/RegisterForm";
 import { Col, Container, Row } from "react-bootstrap";
 
 export default function LoginPage() {
@@ -6,7 +6,7 @@ export default function LoginPage() {
     <Container>
       <Row>
         <Col>
-          <LoginForm />
+          <RegisterForm />
         </Col>
       </Row>
     </Container>
