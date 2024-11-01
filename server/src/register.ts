@@ -6,12 +6,14 @@ import { User } from "./types/User";
 export const registerNewUser = (body: NewUser) => {
   // generate random user id, using uuid
   const newUser: User = {
-    ...body,
+    username: body.username,
+    email: body.email,
+    password: body.password,
     user_id: uuidv4(),
-    account_type: "adult",
-    has_free_chat: true,
-    has_safe_chat: false,
-    has_safe_server_access: false,
+    account_type: body.isAdult ? "adult" : "child",
+    has_free_chat: body.isAdult ? true : false,
+    has_safe_chat: body.isAdult ? false : true,
+    has_safe_server_access: body.isAdult ? true : false,
   };
   return new Promise(function (resolve, reject) {
     const {

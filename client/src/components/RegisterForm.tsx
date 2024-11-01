@@ -12,6 +12,7 @@ export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [isAdult, setIsAdult] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
@@ -29,6 +30,7 @@ export default function RegisterForm() {
         username,
         email,
         password,
+        isAdult,
       })
       .then((res) => {
         // Check for errors
@@ -78,6 +80,15 @@ export default function RegisterForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter password"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formAdult">
+        <Form.Check
+          type="checkbox"
+          label="I am 18 years or older."
+          checked={isAdult}
+          onChange={(e) => setIsAdult(e.target.checked)}
         />
       </Form.Group>
 
