@@ -50,6 +50,7 @@ export default function Header() {
             variant="primary"
             onClick={() => {
               removeLoginCookie();
+              router.push("/login");
             }}
           >
             Logout

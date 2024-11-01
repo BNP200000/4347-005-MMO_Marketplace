@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import Link from "next/link";
 import { setLoginCookie } from "@/utils/loginCookie";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -20,6 +21,7 @@ export default function LoginForm() {
       return;
     }
 
+    setLoading(true);
     // Save login data to the cookie
     setLoginCookie({ username, password });
 
@@ -58,8 +60,13 @@ export default function LoginForm() {
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit" className="w-100 mt-3">
-        Login
+      <Button
+        disabled={loading}
+        variant="primary"
+        type="submit"
+        className="w-100 mt-3"
+      >
+        {loading ? <Spinner /> : "Login"}
       </Button>
 
       <Form.Text
