@@ -1,39 +1,51 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import axios from "axios";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import Link from "next/link";
 import { setLoginCookie } from "@/utils/loginCookie";
 import { useRouter } from "next/navigation";
 
+const PORT = process.env.PORT || 5001;
+
 export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
     if (!username || !password) {
       setError("All fields are required.");
       return;
     }
 
     setLoading(true);
-    // Save login data to the cookie
-    setLoginCookie({ username, password });
 
-    // Set login state to trigger useEffect
-    setIsLoggedIn(true);
-  };
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/");
+    try {
+      const res = await axios.post(`http://localhost:${PORT}/login`, {
+        username,
+        password,
+      });
+      // Check for error message in response
+      if (res.data.error) {
+        setError(res.data.error);
+      } else {
+        // Set login data in the cookie
+        setLoginCookie({ username, password });
+        // Redirect to the home page
+        router.push("/");
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }, [isLoggedIn, router]);
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -66,7 +78,7 @@ export default function LoginForm() {
         type="submit"
         className="w-100 mt-3"
       >
-        {loading ? <Spinner /> : "Login"}
+        {loading ? <Spinner animation="border" size="sm" /> : "Login"}
       </Button>
 
       <Form.Text

@@ -13,6 +13,7 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use("/login", require("./login"));
 
 // ROUTES
 app.get("/table/:table", (req: Request, res: Response) => {
