@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import { registerNewUser } from "./register";
 const marketplace = require("./marketplace");
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 // ROUTES
-app.get("/:table", (req: Request, res: Response) => {
+app.get("/table/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   marketplace
     .getTable(table)
@@ -26,7 +27,7 @@ app.get("/:table", (req: Request, res: Response) => {
     });
 });
 
-app.post("/:table", (req: Request, res: Response) => {
+app.post("/table/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   const data = req.body;
 
@@ -44,10 +45,9 @@ app.post("/:table", (req: Request, res: Response) => {
     });
 });
 
-app.post("/user", (req: Request, res: Response) => {
+app.post("/register", (req: Request, res: Response) => {
   const body = req.body;
-  marketplace
-    .registerNewUser(body)
+  registerNewUser(body)
     .then((response) => {
       res.status(201).json(response);
     })

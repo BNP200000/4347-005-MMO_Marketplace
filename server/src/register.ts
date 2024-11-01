@@ -1,6 +1,18 @@
 import pool from "./dbConfig";
+import UUID from "uuid";
+import { NewUser } from "./types/NewUser";
+import { User } from "./types/User";
 
-const registerNewUser = (body) => {
+export const registerNewUser = (body: NewUser) => {
+  // generate random user id, using uuid
+  const newUser: User = {
+    ...body,
+    user_id: UUID.v4(),
+    account_type: "user",
+    has_free_chat: true,
+    has_safe_chat: false,
+    has_safe_server_access: false,
+  };
   return new Promise(function (resolve, reject) {
     const {
       user_id,
@@ -11,7 +23,7 @@ const registerNewUser = (body) => {
       has_free_chat,
       has_safe_chat,
       has_safe_server_access,
-    } = body;
+    } = newUser;
     pool.query(
       `INSERT INTO USER \
             (user_id, username, email, password, account_type, \
@@ -59,7 +71,3 @@ const registerNewUser = (body) => {
 //     );
 //   });
 // };
-
-module.exports = {
-  registerNewUser,
-};
