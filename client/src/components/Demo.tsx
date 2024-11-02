@@ -18,8 +18,9 @@ export default function Demo({tableName}: TableProp) {
   const [formData, setFormData] = useState<{[key: string]: any}>({});
   const [showForm, setShowForm] = useState(false);
   const PORT = process.env.PORT || 5001;
-  const filterOut = tableName === "ITEM" || tableName === "LISTING"
-  ? ["item_id", "listing_id"] : [];
+
+  // Filter out columns that should not be modifiable
+  const filterOut = ["item_id", "total_price", "listing_id"];
 
   // Handle GET request
   const handleQuery = () => {
@@ -58,14 +59,21 @@ export default function Demo({tableName}: TableProp) {
   const handleInsert = () => {
     const formattedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
-        key, (
-          value?.toLowerCase() === "null" || value === "") 
-            ? null
-            : isNaN(value) || typeof value !== "string"
-              ? value
-              : Number(value)
+        key, 
+        (typeof value === "string" && (value.toLowerCase() === "null" || value === ""))
+          ? null
+          : isNaN(value) || typeof value !== "string"
+            ? value : Number(value)
       ])
     );
+
+    if(["LISTING", "TRANSACTION"].includes(tableName) && formattedData.hasOwnProperty("listing_id")) {
+      delete formattedData.listing_id;
+    }
+
+    if(tableName === "TRANSACTION" && formattedData.hasOwnProperty("total_price")) {
+      delete formattedData.total_price;
+    } 
 
     axios
       .post(`http://localhost:${PORT}/${tableName}`, formattedData)

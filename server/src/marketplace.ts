@@ -1,4 +1,5 @@
 import pool from "./dbConfig";
+import {getUserId, getCharacterId, getClassId, getLeaderId, getItemId} from "./dbConfig";
 
 // Format QUERY display for certain tables
 const formatQuery = (tableName: string) => {
@@ -118,31 +119,7 @@ const getTable = async (tableName: string, displayFormat: string) => {
   }
 };
 
-const getUserId = async (username: string) => {
-  const res = await pool.query(
-      `SELECT user_id FROM "USER" WHERE username = $1`, 
-      [username]
-  );
-  if(res.rows.length === 0) {
-    throw new Error(`User ${username} does not exist`);
-  }
-  return res.rows[0].user_id;
-};
-
-const getClassId = async (classname: string) => {
-  const res = await pool.query(
-      `SELECT class_id FROM "CLASS" WHERE class_name = $1`, 
-      [classname]
-  );
-  if(res.rows.length === 0) {
-    throw new Error(`Class ${classname} does not exist`);
-  }
-  return res.rows[0].class_id;
-};
-
-const createRecord = async (tableName: string, data: Record<string, any>) => {
-  console.log(`INSERTING into ${tableName}`);
-  
+const createRecord = async (tableName: string, data: Record<string, any>) => {  
   let columns = Object.keys(data);
   let values = Object.values(data);
 
@@ -151,28 +128,47 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
   }
 
   try {
+    // Base insert
     let placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
     let query = `INSERT INTO "${tableName}"
                   (${columns.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
 
+    // Modified insert based on the table
     if(tableName === "CHARACTER") {
       const insertCols = [...columns];
       const insertValues = [...values];
 
       const ownerIdx = columns.indexOf("owner");
-      if(ownerIdx !== -1) {
-        const ownerName = values[ownerIdx];
-        const ownerId = await getUserId(ownerName);
-        insertValues[ownerIdx] = ownerId;
+      if(ownerIdx === -1) {
+        throw new Error("Owner could not be found");
       }
+      const ownerName = values[ownerIdx];
+      const ownerId = await getUserId(ownerName);
+      insertCols[ownerIdx] = "owner_id";
+      insertValues[ownerIdx] = ownerId;
 
       const classIdx = columns.indexOf("class");
-      if(classIdx !== -1) {
-        const className = values[classIdx];
-        const classId = await getClassId(className);
-        insertValues[classIdx] = classId;
+      if(classIdx === -1) {
+        throw new Error("Class could not be found");
+      }
+      const className = values[classIdx];
+      const classId = await getClassId(className);
+      insertCols[classIdx] = "character_class";
+      insertValues[classIdx] = classId;
+
+      const leaderIdx = columns.indexOf("leader");
+      if(leaderIdx === -1) {
+        throw new Error("Leader could not be found");
+      }
+      insertCols[leaderIdx] = "leader_id";
+      if(values[leaderIdx] !== null) {
+        const leader = values[leaderIdx];
+        const leaderId = await getLeaderId(leader, tableName);
+        insertValues[leaderIdx] = leaderId;
+      } else {
+        insertValues[leaderIdx] = null;
       }
 
       placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
@@ -182,30 +178,113 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
                 RETURNING *`;
       values = insertValues;
     } else if(tableName === "PARTY") {
-      const nameIdx = columns.indexOf("party_leader");
-      if(nameIdx === -1) {
-        throw new Error("party_leader must be specified");
+      const insertCols = [...columns];
+      const insertValues = [...values];
+      
+      const leaderIdx = columns.indexOf("party_leader");
+      if(leaderIdx === -1) {
+        throw new Error("Character could not be found");
       }
-
-      const leaderName = values[nameIdx];
-      const getLeaderIdQuery = `SELECT character_id 
-                                FROM "CHARACTER" 
-                                WHERE character_name = $1;`;
-      const leaderRes = await pool.query(getLeaderIdQuery, [leaderName]);
-      if(leaderRes.rowCount === 0) {
-        throw new Error(`Character ${leaderName} does not exist in the "CHARACTER" table`);
-      }
-
-      const leaderId = leaderRes.rows[0].character_id;
-      const insertCols = columns.filter((col) => col !== "party_leader");
-      values = values.filter((_, i) => columns[i] !== "party_leader");
-      values.unshift(leaderId);
+      const leader = values[leaderIdx];
+      const leaderId = await getLeaderId(leader, tableName);
+      insertValues[leaderIdx] = leaderId;
 
       placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
       query = `INSERT INTO "${tableName}"
                 (${insertCols.join(", ")})
-                VALUES (${placeholders}) 
+                VALUES (${placeholders})
                 RETURNING *`;
+      values = insertValues;
+    } else if(tableName === "CHARACTER_FRIEND") {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+
+      const characterIdx = columns.indexOf("character");
+      if(characterIdx === -1) {
+        throw new Error("Character could not be found");
+      } 
+      const chararacterName = values[characterIdx];
+      const characterId = await getCharacterId(chararacterName);
+      insertCols[characterIdx] = "character_a_id";
+      insertValues[characterIdx] = characterId;
+
+      const friendIdx = columns.indexOf("friend");
+      if(friendIdx === -1) {
+        throw new Error("Friend could not be found");
+      }
+      const friendName = values[friendIdx];
+      const friendId = await getCharacterId(friendName);
+      insertCols[friendIdx] = "character_b_id";
+      insertValues[friendIdx] = friendId;
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues;
+    } else if(["IN_INVENTORY", "LISTING"].includes(tableName)) {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+
+      const characterIdx = columns.indexOf("character");
+      if(characterIdx === -1) {
+        throw new Error("Character could not be found");
+      }
+      const characterName = values[characterIdx];
+      const characterId = await getCharacterId(characterName);
+      insertCols[characterIdx] = "character_id";
+      insertValues[characterIdx] = characterId;
+
+      const itemIdx = columns.indexOf("item");
+      if(itemIdx === -1) {
+        throw new Error("Item could not be found");
+      }
+      const itemName = values[itemIdx];
+      const itemId = await getItemId(itemName);
+      insertCols[itemIdx] = "item_id";
+      insertValues[itemIdx] = itemId;
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues;
+    } else if(tableName === "TRANSACTION") {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+
+      const sellerIdx = columns.indexOf("seller");
+      if(sellerIdx === -1) {
+        throw new Error("Seller could not be found");
+      }
+      const sellerName = values[sellerIdx];
+      const sellerId = await getCharacterId(sellerName);
+      insertCols[sellerIdx] = "seller_id";
+      insertValues[sellerIdx] = sellerId;
+
+      const buyerIdx = columns.indexOf("buyer");
+      if(sellerIdx === -1) {
+        throw new Error("Buyer could not be found");
+      }
+      const buyerName = values[buyerIdx];
+      const buyerId = await getCharacterId(buyerName);
+      insertCols[buyerIdx] = "buyer_id";
+      insertValues[buyerIdx] = buyerId;
+
+      const listCheck = `SELECT 1 FROM "LISTING" WHERE character_id = $1`
+      const listRes = await pool.query(listCheck, [sellerId]);
+      if(listRes.rowCount === 0) {
+        throw new Error(`Seller ${sellerName} is not listed in the LISTING table`);
+      }
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues;
     }
 
     return await new Promise(function (resolve, reject) {
@@ -230,6 +309,4 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
 module.exports = {
   getTable,
   createRecord,
-  //createUser,
-  //deleteUser
 };

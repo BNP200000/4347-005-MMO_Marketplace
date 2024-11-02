@@ -1,9 +1,9 @@
 CREATE TABLE
     IF NOT EXISTS "USER" (
-        user_id VARCHAR(25) PRIMARY KEY,
-        username VARCHAR(25) NOT NULL,
+        user_id VARCHAR(36) PRIMARY KEY,
+        username VARCHAR(25) UNIQUE NOT NULL,
         password VARCHAR(25) NOT NULL,
-        email VARCHAR(25),
+        email VARCHAR(25) NOT NULL,
         account_type VARCHAR(25),
         has_free_chat BOOLEAN,
         has_safe_chat BOOLEAN,
@@ -13,19 +13,19 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS "CLASS" (
         class_id VARCHAR(25) PRIMARY KEY,
-        class_name VARCHAR(25),
-        class_description VARCHAR(25),
-        class_role VARCHAR(25)
+        class_name VARCHAR(25) UNIQUE,
+        class_description VARCHAR(25) NOT NULL,
+        class_role VARCHAR(25) NOT NULL
     );
 
 CREATE TABLE
     IF NOT EXISTS "CHARACTER" (
         character_id VARCHAR(25) PRIMARY KEY,
-		exp_level INT CHECK(exp_level >= 0),
-		character_name VARCHAR(25), 
-        gold_balance INT CHECK(gold_balance >= 0),
+		exp_level INT CHECK(exp_level >= 0) NOT NULL,
+		character_name VARCHAR(25) UNIQUE, 
+        gold_balance INT CHECK(gold_balance >= 0) NOT NULL,
         owner_id VARCHAR(25) NOT NULL,
-        character_class VARCHAR(25),
+        character_class VARCHAR(25) NOT NULL,
         leader_id VARCHAR(25),
         FOREIGN KEY (owner_id) REFERENCES "USER" (user_id) ON DELETE CASCADE ON UPDATE CASCADE, -- "OWNS" relationship, 1 to N
         FOREIGN KEY (character_class) REFERENCES "CLASS" (class_id) ON DELETE CASCADE ON UPDATE CASCADE -- "BELONGS TO" relationship, 1 to 1
@@ -38,14 +38,15 @@ CREATE TABLE
         character_b_id VARCHAR(25),
         PRIMARY KEY (character_a_id, character_b_id),
         FOREIGN KEY (character_a_id) REFERENCES "CHARACTER" (character_id),
-        FOREIGN KEY (character_b_id) REFERENCES "CHARACTER" (character_id)
-    );
+        FOREIGN KEY (character_b_id) REFERENCES "CHARACTER" (character_id),
+    	CHECK (character_a_id <> character_b_id) -- Reject adding self as friend
+	);
 
 CREATE TABLE
     IF NOT EXISTS "PARTY" (
         party_name VARCHAR(50) UNIQUE,
         party_leader VARCHAR(25) UNIQUE,
-        party_balance INT CHECK(party_balance >= 0),
+        party_balance INT CHECK(party_balance >= 0) NOT NULL,
         PRIMARY KEY (party_name, party_leader),
         FOREIGN KEY (party_leader) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -54,17 +55,17 @@ CREATE TABLE
     IF NOT EXISTS "ITEM" (
         item_id SERIAL PRIMARY KEY,
         item_name VARCHAR(50) NOT NULL UNIQUE,
-        item_category VARCHAR(25),
-        item_rarity VARCHAR(25),
-        item_price NUMERIC(10, 0) CHECK(item_price > 0),
-        allowed_classes TEXT[]
+        item_category VARCHAR(25) NOT NULL,
+        item_rarity VARCHAR(25) NOT NULL,
+        item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL,
+        allowed_classes TEXT[] NOT NULL
     );
 
 CREATE TABLE
     IF NOT EXISTS "IN_INVENTORY" (
         character_id VARCHAR(25) NOT NULL,
         item_id SERIAL NOT NULL,
-        quantity int,
+        quantity int NOT NULL CHECK(quantity >= 0),
 		PRIMARY KEY (character_id, item_id),
         FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -77,7 +78,7 @@ CREATE TABLE
         item_id SERIAL NOT NULL,
         quantity int NOT NULL CHECK(quantity >= 0),
         listing_date DATE NOT NULL,
-        is_active BOOLEAN,
+        is_active BOOLEAN NOT NULL,
         sale_price NUMERIC(10, 0) CHECK(sale_price >= 0),
         FOREIGN KEY (character_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -87,14 +88,15 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS "TRANSACTION" (
         transaction_id CHAR(10) PRIMARY KEY,
-        listing_id SERIAL,
+        listing_id SERIAL NOT NULL,
 		seller_id VARCHAR(25) NOT NULL,
 		buyer_id VARCHAR(25) NOT NULL,
-        total_price INT,
-        transaction_date DATE,
+        total_price INT NOT NULL,
+        transaction_date DATE NOT NULL,
 		FOREIGN KEY (seller_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
 		FOREIGN KEY (buyer_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (listing_id) REFERENCES "LISTING" (listing_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (listing_id) REFERENCES "LISTING" (listing_id) ON DELETE CASCADE ON UPDATE CASCADE,
+		CHECK (seller_id <> buyer_id) -- Reject transaction of self
     );
 
 -- Caluculate the total price value for the TRANSACTION table
