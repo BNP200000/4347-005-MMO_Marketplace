@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"; // this is important
 
 import React, { useState, useEffect } from "react";
@@ -10,7 +11,7 @@ interface TableProp {
   tableName: string;
 }
 
-export default function Demo({tableName}: TableProp) {
+export default function Demo({ tableName }: TableProp) {
   const [message, setMessage] = useState("");
   const [err, setError] = useState();
   const [table, setTable] = useState<any[]>([]); // Store the fetched table
@@ -25,10 +26,10 @@ export default function Demo({tableName}: TableProp) {
   // Handle GET request
   const handleQuery = () => {
     axios
-      .get(`http://localhost:${PORT}/${tableName}`)
+      .get(`http://localhost:${PORT}/table/${tableName}`)
       .then((res) => {
         setTable(res.data);
-        if(res.data.length > 0) {
+        if (res.data.length > 0) {
           setColumns(Object.keys(res.data[0]));
           setShowForm(true);
         }       
@@ -132,7 +133,7 @@ export default function Demo({tableName}: TableProp) {
       return data.split("T")[0];
     }
     return data;
-  }
+  };
 
   // Display the table
   const tableData = table.length > 0 ? (

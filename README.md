@@ -2,7 +2,7 @@
 
 # Instructions for running the project
 
-1. In "server/src/dbConfig.ts", change the <DATABASE> and <PASSWORD> to the correct fields for your local environment.
+1. In "server/src/dbConfig.ts", change the DATABASE and PASSWORD to the correct fields for your local environment.
 
 2. Run the following in one terminal:
 ```bash

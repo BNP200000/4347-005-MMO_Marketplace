@@ -8,22 +8,26 @@ const PORT = process.env.PORT || 5001;
 const corsOptions = {
   origin: true, // Allow all origins
   methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
-}
+};
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use("/login", require("./login"));
+app.use("/register", require("./register"));
 
 // ROUTES
 
 // QUERY
 app.get("/:table", (req: Request, res: Response) => { 
   const table = req.params.table;
-  marketplace.getTable(table).then((response) => {
-    res.status(200).json(response);
-  })
-  .catch((error) => {
-    res.status(500).json({error: "Internal server error"});
-  });
+  marketplace
+    .getTable(table)
+    .then((response) => {
+      res.status(200).json(response);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Internal server error" });
+    });
 });
 
 // INSERT

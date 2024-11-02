@@ -34,8 +34,8 @@ CREATE TABLE
 
 CREATE TABLE
     IF NOT EXISTS "CHARACTER_FRIEND" (
-        character_a_id VARCHAR(25),
-        character_b_id VARCHAR(25),
+        character_a_id VARCHAR(50),
+        character_b_id VARCHAR(50),
         PRIMARY KEY (character_a_id, character_b_id),
         FOREIGN KEY (character_a_id) REFERENCES "CHARACTER" (character_id),
         FOREIGN KEY (character_b_id) REFERENCES "CHARACTER" (character_id),
@@ -63,7 +63,7 @@ CREATE TABLE
 
 CREATE TABLE
     IF NOT EXISTS "IN_INVENTORY" (
-        character_id VARCHAR(25) NOT NULL,
+        character_id VARCHAR(50) NOT NULL,
         item_id SERIAL NOT NULL,
         quantity int NOT NULL CHECK(quantity >= 0),
 		PRIMARY KEY (character_id, item_id),
@@ -74,7 +74,7 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS "LISTING" (
         listing_id SERIAL PRIMARY KEY,
-        character_id VARCHAR(25) NOT NULL,
+        character_id VARCHAR(50) NOT NULL,
         item_id SERIAL NOT NULL,
         quantity int NOT NULL CHECK(quantity >= 0),
         listing_date DATE NOT NULL,
