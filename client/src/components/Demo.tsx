@@ -18,15 +18,19 @@ export default function Demo({ tableName }: TableProp) {
   const [columns, setColumns] = useState<string[]>([]);
   const [formData, setFormData] = useState<{[key: string]: any}>({});
   const [showForm, setShowForm] = useState(false);
+  const [classes, setClasses] = useState<string[]>([]);
   const PORT = process.env.PORT || 5001;
+  const URL = `http://localhost:${PORT}/${tableName}`;
 
   // Filter out columns that should not be modifiable
-  const filterOut = ["item_id", "total_price", "listing_id"];
+  const filterOut = ["class_id", "character_id", "user_id", "item_id", "listing_id", "transaction_id", "total_price"];
 
   // Handle GET request
+
+  // Query the table on trigger, i.e. a button
   const handleQuery = () => {
     axios
-      .get(`http://localhost:${PORT}/table/${tableName}`)
+      .get(URL)
       .then((res) => {
         setTable(res.data);
         if (res.data.length > 0) {
@@ -40,18 +44,24 @@ export default function Demo({ tableName }: TableProp) {
 
           if(typeof value === "boolean" || Array.isArray(value)) {
             acc[col] = value;
-          } else if(col === "allowed_classes" && typeof value === "string") {
-            acc[col] = value.split(',').map(item => item.trim());
+          } else if(col === "allowed_classes") {
+            // Get the class names from the CLASS table
+            axios.get(`http://localhost:${PORT}/CLASS`)
+            .then((classRes) => {
+              const classNames = classRes.data.map((classItem: any) => classItem.class_name);
+              setClasses(classNames);
+            })
+            .catch((err) => {
+              setError(err);
+            });
           } else {
             acc[col] = "";
           }
           return acc;
         }, {} as {[key: string]: any}) : {};
         setFormData(initForm);
-
       })
       .catch((err) => {
-        console.error("ERROR = " + err);
         setError(err);
       });
   };
@@ -68,22 +78,27 @@ export default function Demo({ tableName }: TableProp) {
       ])
     );
 
-    if(["LISTING", "TRANSACTION"].includes(tableName) && formattedData.hasOwnProperty("listing_id")) {
-      delete formattedData.listing_id;
+    if(["LISTING", "TRANSACTION", "ITEM"].includes(tableName)) {
+      Object.keys(formattedData)
+      .filter(key => key.endsWith("_id"))
+      .forEach(key => delete formattedData[key]);
     }
+
 
     if(tableName === "TRANSACTION" && formattedData.hasOwnProperty("total_price")) {
       delete formattedData.total_price;
     } 
 
+    console.log(`Sending ${JSON.stringify(formattedData, null, 2)}`);
+
     axios
-      .post(`http://localhost:${PORT}/${tableName}`, formattedData)
+      .post(URL, formattedData)
       .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
+        // Clear form after successful insert
       })
       .catch((err) => {
-        console.log(`FAILED: ${JSON.stringify(formattedData)}`);
         setError(err);
       })
   }
@@ -91,37 +106,28 @@ export default function Demo({ tableName }: TableProp) {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, type, checked, value} = e.target;
     setFormData((prevData) => {
-      return {
-        ...prevData,
-        [name]: type === "checkbox" ? checked : value,
-      }
-    })
-    /*if(name === "allowed_classes") {
-      setFormData((prevData) => {
-        const currentClasses = prevData.allowed_classes || [];
-        if(checked) {
-          // Add the class to the allowed_ckass
-          return {
-            ...prevData,
-            allowed_classes: [...new Set([currentClasses, value])],
-          };
-        } else {
-          return {
-            ...prevData,
-            allowed_classes: currentClasses,
-          }
-        }
-      })
-    } else {
-      setFormData((prevData) => {
-        return {
-          ...prevData,
-          [name]: type === "checkbox" ? checked : value,
-        }
-      })
-    }*/
+      const newData = {...prevData};
 
+      if(name === "allowed_classes") {
+        //const currentClasses = newData[name] || [];
+        newData[name] = (checked) ? [...(prevData[name] || []), value] : (prevData[name] || [])
+        .filter((className: string) => className !== value);
+      } else {
+        newData[name] = type === "checkbox" ? checked : value;
+      }
+
+      return newData;
+    })
   };
+
+  // Load immediately
+  useEffect(() => {
+    setShowForm(false);
+    setTable([]);
+    setColumns([]);
+    setFormData({});
+    handleQuery();
+  }, [PORT, tableName])
 
   // Format the table values
   const format = (data: any) => {
@@ -137,34 +143,31 @@ export default function Demo({ tableName }: TableProp) {
 
   // Display the table
   const tableData = table.length > 0 ? (
-    <>
-      {/*<h6>INSERT {tableName}</h6>*/}
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
+    <Table striped bordered hover responsive>
+      <thead>
+        <tr>
+          {columns.map((col) => (
+            <th key={col}>{col}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {table.map((row, index) => (
+          <tr key={index}>
             {columns.map((col) => (
-              <th key={col}>{col}</th>
+              <td key={col}>
+                {format(row[col])}
+              </td>
             ))}
           </tr>
-        </thead>
-        <tbody>
-          {table.map((row, index) => (
-            <tr key={index}>
-              {columns.map((col) => (
-                <td key={col}>
-                  {format(row[col])}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </>
+        ))}
+      </tbody>
+    </Table>
   ) : (
     <p>No data available for this table.</p>
   );
 
-  const displayForm = showForm && (
+  const displayForm = showForm && tableName !== "USER" && (
     <Form>
       {columns
         .filter(col => !filterOut.includes(col))
@@ -172,14 +175,15 @@ export default function Demo({ tableName }: TableProp) {
           return (
             <Form.Group controlId={`form${col}`} key={col}>
               <Form.Label>{col}</Form.Label>
-              {Array.isArray(formData[col]) ? (
-                formData[col].map((item) => (
+              {col === "allowed_classes" ? (
+                classes.map((item) => (
                   <Form.Check
                     type="checkbox"
                     label={item}
                     name={col}
                     key={item}
-                    value={formData[col]?.includes(item)}
+                    value={item}
+                    checked={formData.allowed_classes?.includes(item)}
                     onChange={handleInput}
                   />
                 ))
@@ -188,7 +192,6 @@ export default function Demo({ tableName }: TableProp) {
                   type="checkbox"
                   label={col}
                   name={col}
-                  checked={formData[col]}
                   onChange={handleInput}
                   required
                 />
@@ -232,7 +235,7 @@ export default function Demo({ tableName }: TableProp) {
 
       <Container>
         <Row>
-          <Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>
+          {/*<Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>*/}
           <Col><Button variant="primary" onClick={handleInsert}>INSERT</Button></Col>
           <Col><Button variant="primary">DELETE</Button></Col>
           <Col><Button variant="primary">UPDATE</Button></Col>

@@ -1,5 +1,6 @@
 import pool from "./dbConfig";
 import {getUserId, getCharacterId, getClassId, getLeaderId, getItemId} from "./dbConfig";
+import { v4 as uuidv4 } from "uuid";
 
 // Format QUERY display for certain tables
 const formatQuery = (tableName: string) => {
@@ -9,8 +10,8 @@ const formatQuery = (tableName: string) => {
         case "CHARACTER":
             query = `SELECT
                 C.character_id,
-                C.exp_level,
                 C.character_name,
+                C.exp_level,
                 C.gold_balance,
                 U.username as owner, 
                 P.class_name as class,
@@ -107,6 +108,7 @@ const formatQuery = (tableName: string) => {
 
 const getTable = async (tableName: string, displayFormat: string) => {
   try {
+    
     const query = formatQuery(tableName);
     const results = await pool.query(query);
     if (results && results.rows.length > 0) {
@@ -125,6 +127,11 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
 
   if (columns.length === 0 || values.length === 0) {
     throw new Error("No columns or values provided");
+  }
+
+  // Generate UUID values for the primary key of the tables
+  if(!["ITEM", "LISTING"].includes(tableName) && columns[0].endsWith("_id")) {
+    values[0] = uuidv4();
   }
 
   try {
@@ -154,7 +161,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         throw new Error("Class could not be found");
       }
       const className = values[classIdx];
-      const classId = await getClassId(className);
+      const classId = await getClassId(className);      
       insertCols[classIdx] = "character_class";
       insertValues[classIdx] = classId;
 
@@ -170,24 +177,6 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       } else {
         insertValues[leaderIdx] = null;
       }
-
-      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
-      query = `INSERT INTO "${tableName}"
-                (${insertCols.join(", ")})
-                VALUES (${placeholders})
-                RETURNING *`;
-      values = insertValues;
-    } else if(tableName === "PARTY") {
-      const insertCols = [...columns];
-      const insertValues = [...values];
-      
-      const leaderIdx = columns.indexOf("party_leader");
-      if(leaderIdx === -1) {
-        throw new Error("Character could not be found");
-      }
-      const leader = values[leaderIdx];
-      const leaderId = await getLeaderId(leader, tableName);
-      insertValues[leaderIdx] = leaderId;
 
       placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
       query = `INSERT INTO "${tableName}"
@@ -223,6 +212,52 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
                 VALUES (${placeholders})
                 RETURNING *`;
       values = insertValues;
+    } else if(tableName === "PARTY") {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+      
+      const leaderIdx = columns.indexOf("party_leader");
+      if(leaderIdx === -1) {
+        throw new Error("Character could not be found");
+      }
+      const leader = values[leaderIdx];
+      const leaderId = await getLeaderId(leader, tableName);
+      insertValues[leaderIdx] = leaderId;
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues; 
+    } else if(tableName === "ITEM") {
+      const insertCols = [...columns];
+      const insertValues = [...values];
+
+      const classesIdx = columns.indexOf("allowed_classes");
+      if(classesIdx === -1) {
+        throw new Error("Allowed classes could not be found");
+      }
+      const classes = values[classesIdx];
+
+      const retrieve = classes.map(async (className) => {
+        const classId = await getClassId(className);
+        return classId;
+      });
+
+      const classIds = await Promise.all(retrieve);
+      console.log(`Is array? ${Array.isArray(classIds)}`);
+      insertValues[classesIdx] = classIds;
+
+      placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
+      query = `INSERT INTO "${tableName}"
+                (${insertCols.join(", ")})
+                VALUES (${placeholders})
+                RETURNING *`;
+      values = insertValues;
+
+      console.log(`Column: ${insertCols}`);
+      console.log(`Values: ${insertValues}`);
     } else if(["IN_INVENTORY", "LISTING"].includes(tableName)) {
       const insertCols = [...columns];
       const insertValues = [...values];
@@ -273,6 +308,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       insertCols[buyerIdx] = "buyer_id";
       insertValues[buyerIdx] = buyerId;
 
+      // Check if the seller is on the LISTING table
       const listCheck = `SELECT 1 FROM "LISTING" WHERE character_id = $1`
       const listRes = await pool.query(listCheck, [sellerId]);
       if(listRes.rowCount === 0) {

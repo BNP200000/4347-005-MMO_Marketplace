@@ -11,10 +11,10 @@ router.post("/", (req: Request, res: Response) => {
 
   // Generate random user ID using uuid
   const newUser: User = {
+    user_id: uuidv4(),
     username: body.username,
     email: body.email,
     password: body.password,
-    user_id: uuidv4(),
     account_type: body.isAdult ? "adult" : "child",
     has_free_chat: body.isAdult ? true : false,
     has_safe_chat: body.isAdult ? false : true,

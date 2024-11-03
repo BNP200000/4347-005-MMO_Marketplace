@@ -13,7 +13,7 @@ export default function Home() {
     "CHARACTER_FRIEND", "ITEM", "IN_INVENTORY", 
     "LISTING", "TRANSACTION"
   ];
-  const [table, setTable] = useState("USER");
+  const [table, setTable] = useState(tables[0]);
 
   const handleTableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTable(event.target.value);
@@ -22,8 +22,6 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Link href="/pet">Click to go to Pets Page</Link>
-
         <div>
           <label htmlFor="table-select" style={{marginRight:"8px"}}>
             Select Table:
