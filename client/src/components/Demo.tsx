@@ -24,6 +24,9 @@ export default function Demo({ tableName }: TableProp) {
 
   // Filter out columns that should not be modifiable
   const filterOut = ["class_id", "character_id", "user_id", "item_id", "listing_id", "transaction_id", "total_price"];
+  if(tableName === "TRANSACTION") {
+    filterOut.splice(filterOut.indexOf("listing_id"), 1);
+  }
 
   // Handle GET request
 
@@ -57,6 +60,7 @@ export default function Demo({ tableName }: TableProp) {
           } else {
             acc[col] = "";
           }
+
           return acc;
         }, {} as {[key: string]: any}) : {};
         setFormData(initForm);
@@ -66,39 +70,55 @@ export default function Demo({ tableName }: TableProp) {
       });
   };
 
-  // Handle POST request
-  const handleInsert = () => {
-    const formattedData = Object.fromEntries(
-      Object.entries(formData).map(([key, value]) => [
-        key, 
-        (typeof value === "string" && (value.toLowerCase() === "null" || value === ""))
-          ? null
-          : isNaN(value) || typeof value !== "string"
-            ? value : Number(value)
-      ])
-    );
-
+  // Check if the form data is valid, i.e. no null values
+  const formatFormData = (formData: Record<string, any>) => {
     if(["LISTING", "TRANSACTION", "ITEM"].includes(tableName)) {
-      Object.keys(formattedData)
-      .filter(key => key.endsWith("_id"))
-      .forEach(key => delete formattedData[key]);
+      if(tableName === "TRANSACTION") {
+        if(formData.hasOwnProperty("listing_id")) {
+          formData.listing_id = Number(formData.listing_id);
+        }
+      } else {
+        Object.keys(formData)
+        .filter(key => key.endsWith("_id"))
+        .forEach(key => delete formData[key]);
+      }
+    }
+
+    // total_price will be set 0 but will be calculated from the LISTING table
+    if(tableName === "TRANSACTION" && formData.hasOwnProperty("total_price")) {
+      formData.total_price = 0;
     }
 
 
-    if(tableName === "TRANSACTION" && formattedData.hasOwnProperty("total_price")) {
-      delete formattedData.total_price;
-    } 
 
-    console.log(`Sending ${JSON.stringify(formattedData, null, 2)}`);
+    const formattedData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key, 
+        (typeof value === "string" && (value.toLowerCase() === "null" || value.trim() === ""))
+          ? null
+          : (!isNaN(Number(value)) && typeof value === "string")
+            ? Number(value)
+            : value
+      ])
+    );
 
+    return formattedData
+  }
+
+  // Handle POST request
+  const handleInsert = () => {
+    setFormData(formatFormData(formData));
+
+    console.log(`DATA is ${JSON.stringify(formData, null, 2)}`);
+    
     axios
-      .post(URL, formattedData)
+      .post(URL, formData)
       .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
-        // Clear form after successful insert
       })
       .catch((err) => {
+        console.log(`${JSON.stringify(formData, null, 2)}`);
         setError(err);
       })
   }
@@ -193,7 +213,6 @@ export default function Demo({ tableName }: TableProp) {
                   label={col}
                   name={col}
                   onChange={handleInput}
-                  required
                 />
               ) : (
                 <Form.Control
@@ -202,7 +221,6 @@ export default function Demo({ tableName }: TableProp) {
                   name={col}
                   value={formData[col] || ""}
                   onChange={handleInput}
-                  required
                 />
               )}
             </Form.Group>

@@ -246,7 +246,6 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       });
 
       const classIds = await Promise.all(retrieve);
-      console.log(`Is array? ${Array.isArray(classIds)}`);
       insertValues[classesIdx] = classIds;
 
       placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
@@ -254,10 +253,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
                 (${insertCols.join(", ")})
                 VALUES (${placeholders})
                 RETURNING *`;
-      values = insertValues;
-
-      console.log(`Column: ${insertCols}`);
-      console.log(`Values: ${insertValues}`);
+      values = insertValues; 
     } else if(["IN_INVENTORY", "LISTING"].includes(tableName)) {
       const insertCols = [...columns];
       const insertValues = [...values];
@@ -290,6 +286,12 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       const insertCols = [...columns];
       const insertValues = [...values];
 
+      const listingIdx = columns.indexOf("listing_id");
+      if(listingIdx === -1) {
+        throw new Error("Listing ID could not be found");
+      }
+      const listingId = values[listingIdx];
+
       const sellerIdx = columns.indexOf("seller");
       if(sellerIdx === -1) {
         throw new Error("Seller could not be found");
@@ -300,7 +302,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       insertValues[sellerIdx] = sellerId;
 
       const buyerIdx = columns.indexOf("buyer");
-      if(sellerIdx === -1) {
+      if(buyerIdx === -1) {
         throw new Error("Buyer could not be found");
       }
       const buyerName = values[buyerIdx];
@@ -309,10 +311,12 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       insertValues[buyerIdx] = buyerId;
 
       // Check if the seller is on the LISTING table
-      const listCheck = `SELECT 1 FROM "LISTING" WHERE character_id = $1`
-      const listRes = await pool.query(listCheck, [sellerId]);
+      const listCheck = `SELECT 1 FROM "LISTING" WHERE character_id = $1 and listing_id = $2`
+      const listRes = await pool.query(listCheck, [sellerId, listingId]);
       if(listRes.rowCount === 0) {
         throw new Error(`Seller ${sellerName} is not listed in the LISTING table`);
+      } else {
+        console.log(`Found ${listRes}`)
       }
 
       placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
@@ -321,12 +325,15 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
                 VALUES (${placeholders})
                 RETURNING *`;
       values = insertValues;
+
+      console.log(`Column is ${insertCols}`);
+      console.log(`Value is ${values}`);
     }
 
     return await new Promise(function (resolve, reject) {
       pool.query(query, values, (error, results) => {
         if (error) {
-          reject("TEST");
+          console.log(`ERROR is ${error}`);
           return;
         }
 
@@ -338,7 +345,9 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       });
     });
   } catch (error) {
+    
     throw new Error("Internal server error");
+    
   }
 };
 
