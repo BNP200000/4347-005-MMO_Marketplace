@@ -57,9 +57,15 @@ CREATE TABLE
         item_name VARCHAR(50) NOT NULL UNIQUE,
         item_category VARCHAR(25) NOT NULL,
         item_rarity VARCHAR(25) NOT NULL,
-        item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL,
-        allowed_classes TEXT[] NOT NULL
+        item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL
     );
+
+CREATE TABLE 
+	IF NOT EXISTS "ITEM_CLASS" (
+	    item_id INT NOT NULL REFERENCES "ITEM"(item_id) ON DELETE CASCADE,
+	    class_id VARCHAR(36) NOT NULL REFERENCES "CLASS"(class_id) ON DELETE CASCADE,
+	    PRIMARY KEY (item_id, class_id)
+);
 
 CREATE TABLE
     IF NOT EXISTS "IN_INVENTORY" (
