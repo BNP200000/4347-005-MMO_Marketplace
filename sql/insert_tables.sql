@@ -72,36 +72,66 @@ VALUES
     ('8h9i0j123', '9i0j1k234'),
     ('0j1k2l345', '5e6f7g890');
 
-INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_classes) VALUES
-('Health Potion', 'Consumable', 'Common', 50, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Greater Health Potion', 'Consumable', 'Uncommon', 100, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Mana Potion', 'Consumable', 'Common', 50, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Greater Mana Potion', 'Consumable', 'Uncommon', 100, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Steel Dagger', 'Weapon', 'Rare', 600, ARRAY['2n3o4p567', '9u0v1w234', '6r7s8t901']),
-('Iron Sword', 'Weapon', 'Uncommon', 300, ARRAY['1m2n3o456', '5q6r7s890', '6r7s8t901']),
-('Wooden Staff', 'Weapon', 'Uncommon', 200, ARRAY['3o4p5q678', '0v1w2x345', '7s8t9u012']),
-('Cloak of Shadows', 'Armor', 'Rare', 550, ARRAY['2n3o4p567', '6r7s8t901', '9u0v1w234']),
-('Iron Helm', 'Armor', 'Uncommon', 250, ARRAY['8t9u0v123', '5q6r7s890']),
-('Amulet of Druidic Power', 'Accessory', 'Rare', 300, ARRAY['7s8t9u012', '6r7s8t901']),
-('Robe of Arcane Mysteries', 'Armor', 'Uncommon', 200, ARRAY['3o4p5q678', '7s8t9u012', '8t9u0v123']),
-('Ring of the Necromancer', 'Accessory', 'Epic', 600, ARRAY['0v1w2x345']),
-('Bow of the Silent Hunter', 'Weapon', 'Rare', 250, ARRAY['6r7s8t901', '2n3o4p567']),
-('Divine Shield', 'Shield', 'Legendary', 1200, ARRAY['4p5q6r789', '5q6r7s890', '1m2n3o456']),
-('Crown of the Bard King', 'Headgear', 'Legendary', 1000, ARRAY['9u0v1w234']),
-('Warhammer of the Paladin King', 'Weapon', 'Legendary', 950, ARRAY['5q6r7s890']);
+INSERT INTO 
+	"ITEM_CATEGORY" (category_id, category_type) 
+VALUES 
+	('c2295c6c-2b41-40e1-8086-f5aa69177907', 'Consumable'),
+	('bd87c381-a9bf-4a6e-b545-69a3f8b13830', 'Weapon'),
+	('a42c881e-a961-4126-824f-ff3a4b09fd4c', 'Armor'),
+	('bae6f631-9021-46ca-bc9a-0bc09d7cb20f', 'Accessory'),
+	('4239ff2c-2564-4d31-b305-ae84863ddc2b', 'Shield'),
+	('1cfefd20-3193-43c2-acbe-4a84ffd4f0f8', 'Headgear');
 
+INSERT INTO 
+	"ITEM_RARITY" (rarity_id, rarity_type)
+VALUES
+	('63ef8fe5-6375-4278-a773-8c10f93fcfdb', 'Common'),
+	('9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 'Uncommon'),
+	('18be044f-684d-4a12-bec1-e689846bb741', 'Rare'),
+	('2f8a10d5-cec2-4afb-ad7c-0faa9f8ae247', 'Epic'),
+	('ec34355c-a89e-4543-8786-c80b39e68358', 'Legendary');
+
+INSERT INTO "ITEM" (item_name, category_id, rarity_id, item_price) VALUES
+('Health Potion', 'c2295c6c-2b41-40e1-8086-f5aa69177907', '63ef8fe5-6375-4278-a773-8c10f93fcfdb', 50),
+('Greater Health Potion', 'c2295c6c-2b41-40e1-8086-f5aa69177907', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 100),
+('Mana Potion', 'c2295c6c-2b41-40e1-8086-f5aa69177907', '63ef8fe5-6375-4278-a773-8c10f93fcfdb', 50),
+('Greater Mana Potion', 'c2295c6c-2b41-40e1-8086-f5aa69177907', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 100),
+('Steel Dagger', 'bd87c381-a9bf-4a6e-b545-69a3f8b13830', '18be044f-684d-4a12-bec1-e689846bb741', 600),
+('Iron Sword', 'bd87c381-a9bf-4a6e-b545-69a3f8b13830', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 300),
+('Wooden Staff', 'bd87c381-a9bf-4a6e-b545-69a3f8b13830', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 200),
+('Cloak of Shadows', 'a42c881e-a961-4126-824f-ff3a4b09fd4c', '18be044f-684d-4a12-bec1-e689846bb741', 550),
+('Iron Helm', 'a42c881e-a961-4126-824f-ff3a4b09fd4c', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 250),
+('Amulet of Druidic Power', 'bae6f631-9021-46ca-bc9a-0bc09d7cb20f', '18be044f-684d-4a12-bec1-e689846bb741', 300),
+('Robe of Arcane Mysteries', 'a42c881e-a961-4126-824f-ff3a4b09fd4c', '9d559e17-b7e6-4d98-8a0b-23191d3afbd7', 200),
+('Ring of the Necromancer', 'bae6f631-9021-46ca-bc9a-0bc09d7cb20f', '2f8a10d5-cec2-4afb-ad7c-0faa9f8ae247', 600),
+('Bow of the Silent Hunter', 'bd87c381-a9bf-4a6e-b545-69a3f8b13830', '18be044f-684d-4a12-bec1-e689846bb741', 250),
+('Divine Shield', '4239ff2c-2564-4d31-b305-ae84863ddc2b', 'ec34355c-a89e-4543-8786-c80b39e68358', 1200),
+('Crown of the Bard King', '1cfefd20-3193-43c2-acbe-4a84ffd4f0f8', 'ec34355c-a89e-4543-8786-c80b39e68358', 1000),
+('Warhammer of the Paladin King', 'bd87c381-a9bf-4a6e-b545-69a3f8b13830', 'ec34355c-a89e-4543-8786-c80b39e68358', 950);
+
+INSERT INTO 
+	"ITEM_CLASS" (item_id, class_id)
+VALUES 
+(1, '1m2n3o456'), (1, '2n3o4p567'), (1, '3o4p5q678'), (1, '4p5q6r789'), (1, '5q6r7s890'), 
+(1, '6r7s8t901'), (1, '7s8t9u012'), (1, '8t9u0v123'), (1, '9u0v1w234'), (1, '0v1w2x345'),
+(2, '1m2n3o456'), (2, '2n3o4p567'), (2, '3o4p5q678'), (2, '4p5q6r789'), (2, '5q6r7s890'), 
+(2, '6r7s8t901'), (2, '7s8t9u012'), (2, '8t9u0v123'), (2, '9u0v1w234'), (2, '0v1w2x345'),
+(3, '1m2n3o456'), (3, '2n3o4p567'), (3, '3o4p5q678'), (3, '4p5q6r789'), (3, '5q6r7s890'), 
+(3, '6r7s8t901'), (3, '7s8t9u012'), (3, '8t9u0v123'), (3, '9u0v1w234'), (3, '0v1w2x345'),
+(4, '1m2n3o456'), (4, '2n3o4p567'), (4, '3o4p5q678'), (4, '4p5q6r789'), (4, '5q6r7s890'), 
+(4, '6r7s8t901'), (4, '7s8t9u012'), (4, '8t9u0v123'), (4, '9u0v1w234'), (4, '0v1w2x345'),
+(5, '2n3o4p567'), (5, '9u0v1w234'), (5, '6r7s8t901'),
+(6, '1m2n3o456'), (6, '5q6r7s890'), (6, '6r7s8t901'),
+(7, '3o4p5q678'), (7, '0v1w2x345'), (7, '7s8t9u012'),
+(8, '2n3o4p567'), (8, '6r7s8t901'), (8, '9u0v1w234'),
+(9, '8t9u0v123'), (9, '5q6r7s890'),
+(10, '7s8t9u012'), (10, '6r7s8t901'),
+(11, '3o4p5q678'), (11, '7s8t9u012'), (11, '8t9u0v123'),
+(12, '0v1w2x345'),
+(13, '6r7s8t901'), (13, '2n3o4p567'),
+(14, '4p5q6r789'), (14, '5q6r7s890'), (14, '1m2n3o456'),
+(15, '9u0v1w234'),
+(16, '5q6r7s890');
 
 INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_price) VALUES
 ('1a2b3c456', 10, '2024-09-15', TRUE, 150),

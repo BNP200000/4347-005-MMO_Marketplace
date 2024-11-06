@@ -52,20 +52,36 @@ CREATE TABLE
     );
 
 CREATE TABLE
+	IF NOT EXISTS "ITEM_CATEGORY" (
+		category_id VARCHAR(36) PRIMARY KEY,
+		category_type VARCHAR(50) UNIQUE NOT NULL
+	);
+
+CREATE TABLE
+	IF NOT EXISTS "ITEM_RARITY" (
+		rarity_id VARCHAR(36) PRIMARY KEY,
+		rarity_type VARCHAR(50) UNIQUE NOT NULL
+	);
+
+CREATE TABLE
     IF NOT EXISTS "ITEM" (
         item_id SERIAL PRIMARY KEY,
         item_name VARCHAR(50) NOT NULL UNIQUE,
-        item_category VARCHAR(25) NOT NULL,
-        item_rarity VARCHAR(25) NOT NULL,
-        item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL
+		category_id VARCHAR(36) NOT NULL,
+		rarity_id VARCHAR(36) NOT NULL,
+        item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL,
+		FOREIGN KEY (category_id) REFERENCES "ITEM_CATEGORY" (category_id),
+		FOREIGN KEY (rarity_id) REFERENCES "ITEM_RARITY" (rarity_id)
     );
 
-CREATE TABLE 
+CREATE TABLE
 	IF NOT EXISTS "ITEM_CLASS" (
-	    item_id INT NOT NULL REFERENCES "ITEM"(item_id) ON DELETE CASCADE,
-	    class_id VARCHAR(36) NOT NULL REFERENCES "CLASS"(class_id) ON DELETE CASCADE,
-	    PRIMARY KEY (item_id, class_id)
-);
+		item_id SERIAL NOT NULL,
+		class_id VARCHAR(36) NOT NULL,
+		PRIMARY KEY (item_id, class_id),
+		FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE,
+		FOREIGN KEY (class_id) REFERENCES "CLASS" (class_id) ON DELETE CASCADE ON UPDATE CASCADE
+	);
 
 CREATE TABLE
     IF NOT EXISTS "IN_INVENTORY" (
@@ -96,6 +112,7 @@ CREATE TABLE
         listing_id SERIAL NOT NULL,
 		seller_id VARCHAR(36) NOT NULL,
 		buyer_id VARCHAR(36) NOT NULL,
+		quantity INT NOT NULL CHECK(quantity > 0)
         total_price INT,
         transaction_date DATE NOT NULL,
 		FOREIGN KEY (seller_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -108,7 +125,7 @@ CREATE TABLE
 CREATE OR REPLACE FUNCTION calculate_total_price()
 RETURNS TRIGGER AS $$
 BEGIN
-	SELECT listing .quantity * listing.sale_price INTO NEW.total_price
+	SELECT NEW.quantity * listing.sale_price INTO NEW.total_price
 	FROM "LISTING" as listing
 	WHERE listing.listing_id = NEW.listing_id;
 	RETURN NEW;
