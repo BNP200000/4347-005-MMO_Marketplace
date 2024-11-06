@@ -87,35 +87,22 @@ INSERT INTO "ITEM_RARITY" (item_rarity) VALUES
     ('Epic'),
     ('Legendary');
 
-INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_classes) VALUES
-('Health Potion', 'Consumable', 'Common', 50, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Greater Health Potion', 'Consumable', 'Uncommon', 100, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Mana Potion', 'Consumable', 'Common', 50, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Greater Mana Potion', 'Consumable', 'Uncommon', 100, ARRAY[
-    '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
-    '6r7s8t901', '7s8t9u012', '8t9u0v123', '9u0v1w234', '0v1w2x345'
-]),
-('Steel Dagger', 'Weapon', 'Rare', 600, ARRAY['2n3o4p567', '9u0v1w234', '6r7s8t901']),
-('Iron Sword', 'Weapon', 'Uncommon', 300, ARRAY['1m2n3o456', '5q6r7s890', '6r7s8t901']),
-('Wooden Staff', 'Weapon', 'Uncommon', 200, ARRAY['3o4p5q678', '0v1w2x345', '7s8t9u012']),
-('Cloak of Shadows', 'Armor', 'Rare', 550, ARRAY['2n3o4p567', '6r7s8t901', '9u0v1w234']),
-('Iron Helm', 'Armor', 'Uncommon', 250, ARRAY['8t9u0v123', '5q6r7s890']),
-('Amulet of Druidic Power', 'Accessory', 'Rare', 300, ARRAY['7s8t9u012', '6r7s8t901']),
-('Robe of Arcane Mysteries', 'Armor', 'Uncommon', 200, ARRAY['3o4p5q678', '7s8t9u012', '8t9u0v123']),
-('Ring of the Necromancer', 'Accessory', 'Epic', 600, ARRAY['0v1w2x345']),
-('Bow of the Silent Hunter', 'Weapon', 'Rare', 250, ARRAY['6r7s8t901', '2n3o4p567']),
-('Divine Shield', 'Shield', 'Legendary', 1200, ARRAY['4p5q6r789', '5q6r7s890', '1m2n3o456']),
-('Crown of the Bard King', 'Headgear', 'Legendary', 1000, ARRAY['9u0v1w234']),
-('Warhammer of the Paladin King', 'Weapon', 'Legendary', 950, ARRAY['5q6r7s890']);
+INSERT INTO "ITEM" (item_name, category_id, rarity_id, item_price) VALUES
+    ('Health Potion', 1, 1, 50),
+    ('Greater Health Potion', 1, 2, 100),
+    ('Mana Potion', 1, 1, 50),
+    ('Elixir of Fortitude', 1, 3, 200),
+    ('Steel Sword', 2, 3, 400),
+    ('Iron Dagger', 2, 2, 250),
+    ('Fire Staff', 2, 4, 700),
+    ('Leather Armor', 3, 1, 150),
+    ('Plate Armor', 3, 3, 600),
+    ('Ring of Protection', 4, 3, 350),
+    ('Necklace of Wisdom', 4, 4, 800),
+    ('Wooden Shield', 5, 1, 100),
+    ('Divine Shield', 5, 5, 1200),
+    ('Wizard Hat', 6, 3, 500),
+    ('Crown of the King', 6, 5, 1000);
 
 
 INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_price) VALUES
