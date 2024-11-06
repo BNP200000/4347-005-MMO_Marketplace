@@ -72,6 +72,14 @@ VALUES
     ('8h9i0j123', '9i0j1k234'),
     ('0j1k2l345', '5e6f7g890');
 
+INSERT INTO "ITEM_CATEGORY" (item_category) VALUES
+    ('Consumable'),
+    ('Weapon'),
+    ('Armor'),
+    ('Accessory'),
+    ('Shield'),
+    ('Headgear');
+
 INSERT INTO "ITEM" (item_name, item_category, item_rarity, item_price, allowed_classes) VALUES
 ('Health Potion', 'Consumable', 'Common', 50, ARRAY[
     '1m2n3o456', '2n3o4p567', '3o4p5q678', '4p5q6r789', '5q6r7s890', 
