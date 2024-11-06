@@ -51,12 +51,14 @@ CREATE TABLE
         FOREIGN KEY (party_leader) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
-CREATE TABLE IF NOT EXISTS "ITEM_CATEGORY" (
+CREATE TABLE 
+	IF NOT EXISTS "ITEM_CATEGORY" (
     category_id SERIAL PRIMARY KEY,
     item_category VARCHAR(25) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS "ITEM_RARITY" (
+CREATE TABLE 
+	IF NOT EXISTS "ITEM_RARITY" (
     rarity_id SERIAL PRIMARY KEY,
     item_rarity VARCHAR(25) NOT NULL UNIQUE
 );
@@ -65,8 +67,8 @@ CREATE TABLE
     IF NOT EXISTS "ITEM" (
         item_id SERIAL PRIMARY KEY,
         item_name VARCHAR(50) NOT NULL UNIQUE,
-        item_category VARCHAR(25) NOT NULL,
-        item_rarity VARCHAR(25) NOT NULL,
+        category_id INT REFERENCES "ITEM_CATEGORY"(category_id),
+        rarity_id INT REFERENCES "ITEM_RARITY"(rarity_id),
         item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL
     );
 
