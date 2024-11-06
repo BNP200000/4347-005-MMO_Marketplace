@@ -317,7 +317,6 @@ const handleItemClassInsert = async (tableName: string, columns: string[], value
 
 const getTable = async (tableName: string, displayFormat: string) => {
   try {
-    
     const query = formatQuery(tableName);
     const results = await pool.query(query);
     if (results && results.rows.length > 0) {
@@ -357,6 +356,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         break;
       case "ITEM":
         handler = handleItemInsert;
+        console.log("APPLE");
         break;
       case "IN_INVENTORY":
       case "LISTING":
@@ -390,6 +390,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         if (results && results.rows) {
           const row = results.rows[0];
           resolve(`Added ${JSON.stringify(row)} to ${tableName}`);
+          
           
           // Add the list of classes that are allowed to an item into
           // the ITEM_CLASS table
