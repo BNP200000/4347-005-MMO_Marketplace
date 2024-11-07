@@ -148,23 +148,24 @@ INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_pri
 ('5e6f7g890', 10, '2024-09-01', FALSE, 800),
 ('6f7g8h901', 11, '2024-09-12', TRUE, 50);
 
-INSERT INTO "IN_INVENTORY" (character_id, quantity) VALUES
-('1a2b3c456', 32),
-('2b3c4d567', 15),
-('3c4d5e678', 40),
-('4d5e6f789', 22),
-('5e6f7g890', 12),
-('6f7g8h901', 47),
-('7g8h9i012', 29),
-('8h9i0j123', 18),
-('9i0j1k234', 35),
-('0j1k2l345', 41),
-('1a2b3c456', 27),
-('2b3c4d567', 14),
-('3c4d5e678', 38),
-('4d5e6f789', 46),
-('5e6f7g890', 9),
-('6f7g8h901', 44);
+INSERT INTO "IN_INVENTORY" (character_id, item_id, quantity) VALUES
+('0j1k2l345', 1, 5),
+('0j1k2l345', 5, 1),
+('1a2b3c456', 2, 3),
+('1a2b3c456', 8, 1),
+('2b3c4d567', 6, 2),
+('2b3c4d567', 10, 1),
+('3c4d5e678', 7, 1),
+('3c4d5e678', 3, 4),
+('4d5e6f789', 4, 2),
+('4d5e6f789', 12, 1),
+('5e6f7g890', 9, 1),
+('5e6f7g890', 13, 1),
+('6f7g8h901', 15, 1),
+('7g8h9i012', 14, 1),
+('8h9i0j123', 11, 1),
+('9i0j1k234', 1, 6),
+('9i0j1k234', 5, 1);
 
 INSERT INTO
     "TRANSACTION" (transaction_id, seller_id, buyer_id, transaction_date)
