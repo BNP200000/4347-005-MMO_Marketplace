@@ -108,6 +108,7 @@ CREATE TABLE
         listing_id SERIAL NOT NULL,
 		seller_id VARCHAR(36) NOT NULL,
 		buyer_id VARCHAR(36) NOT NULL,
+		quantity INT NOT NULL CHECK(quantity > 0),
         total_price INT,
         transaction_date DATE NOT NULL,
 		FOREIGN KEY (seller_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -120,9 +121,10 @@ CREATE TABLE
 CREATE OR REPLACE FUNCTION calculate_total_price()
 RETURNS TRIGGER AS $$
 BEGIN
-	SELECT listing .quantity * listing.sale_price INTO NEW.total_price
+	SELECT sale_price INTO NEW.total_price
 	FROM "LISTING" as listing
 	WHERE listing.listing_id = NEW.listing_id;
+	NEW.total_price := NEW.total_price * NEW.quantity;
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
