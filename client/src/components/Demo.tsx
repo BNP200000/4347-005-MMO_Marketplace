@@ -108,9 +108,6 @@ export default function Demo({ tableName }: TableProp) {
   // Handle POST request
   const handleInsert = () => {
     setFormData(formatFormData(formData));
-
-    console.log(`DATA is ${JSON.stringify(formData, null, 2)}`);
-    
     axios
       .post(URL, formData)
       .then((res) => {
@@ -118,7 +115,6 @@ export default function Demo({ tableName }: TableProp) {
         handleQuery(); // Refresh the table data
       })
       .catch((err) => {
-        console.log(`${JSON.stringify(formData, null, 2)}`);
         setError(err);
       })
   }

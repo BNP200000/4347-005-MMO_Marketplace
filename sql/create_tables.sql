@@ -74,7 +74,7 @@ CREATE TABLE
 
 CREATE TABLE 
 	IF NOT EXISTS "ITEM_CLASS" (
-	    item_id INT NOT NULL REFERENCES "ITEM"(item_id) ON DELETE CASCADE,
+	    item_id SERIAL NOT NULL REFERENCES "ITEM"(item_id) ON DELETE CASCADE,
 	    class_id VARCHAR(36) NOT NULL REFERENCES "CLASS"(class_id) ON DELETE CASCADE,
 	    PRIMARY KEY (item_id, class_id)
 );
@@ -164,6 +164,3 @@ BEGIN
 		EXECUTE FUNCTION update_total_price();
 	END IF;
 END $$;
-
-
-		
