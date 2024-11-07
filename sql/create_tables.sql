@@ -72,14 +72,12 @@ CREATE TABLE
         item_price NUMERIC(10, 0) CHECK(item_price > 0) NOT NULL
     );
 
-CREATE TABLE
+CREATE TABLE 
 	IF NOT EXISTS "ITEM_CLASS" (
-		item_id SERIAL NOT NULL,
-		class_id VARCHAR(36) NOT NULL,
-		PRIMARY KEY (item_id, class_id),
-		FOREIGN KEY (item_id) REFERENCES "ITEM" (item_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		FOREIGN KEY (class_id) REFERENCES "CLASS" (class_id) ON DELETE CASCADE ON UPDATE CASCADE
-	);
+	    item_id SERIAL NOT NULL REFERENCES "ITEM"(item_id) ON DELETE CASCADE,
+	    class_id VARCHAR(36) NOT NULL REFERENCES "CLASS"(class_id) ON DELETE CASCADE,
+	    PRIMARY KEY (item_id, class_id)
+);
 
 CREATE TABLE
     IF NOT EXISTS "IN_INVENTORY" (
@@ -110,7 +108,6 @@ CREATE TABLE
         listing_id SERIAL NOT NULL,
 		seller_id VARCHAR(36) NOT NULL,
 		buyer_id VARCHAR(36) NOT NULL,
-		quantity INT NOT NULL CHECK(quantity > 0),
         total_price INT,
         transaction_date DATE NOT NULL,
 		FOREIGN KEY (seller_id) REFERENCES "CHARACTER" (character_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -123,7 +120,7 @@ CREATE TABLE
 CREATE OR REPLACE FUNCTION calculate_total_price()
 RETURNS TRIGGER AS $$
 BEGIN
-	SELECT NEW.quantity * listing.sale_price INTO NEW.total_price
+	SELECT listing .quantity * listing.sale_price INTO NEW.total_price
 	FROM "LISTING" as listing
 	WHERE listing.listing_id = NEW.listing_id;
 	RETURN NEW;
@@ -167,6 +164,3 @@ BEGIN
 		EXECUTE FUNCTION update_total_price();
 	END IF;
 END $$;
-
-
-		

@@ -41,8 +41,8 @@ const formatQuery = (tableName: string) => {
     "ITEM": `SELECT 
                 I.item_id, 
                 I.item_name, 
-                IC.category_type AS item_category,
-                IR.rarity_type AS item_rarity,
+                IC.item_category AS item_category,
+                IR.item_rarity AS item_rarity,
                 I.item_price,
                 STRING_AGG(C.class_name, ', ') AS allowed_classes
             FROM "${tableName}" AS I
@@ -53,8 +53,8 @@ const formatQuery = (tableName: string) => {
             GROUP BY
               I.item_id,
               I.item_name,
-              IC.category_type,
-              IR.rarity_type,
+              IC.item_category,
+              IR.item_rarity,
               I.item_price
             ORDER BY
               I.item_id;`,
@@ -338,7 +338,7 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
   }
 
   // Generate UUID values for the primary key of the tables
-  if(!["ITEM", "LISTING"].includes(tableName) && columns[0].endsWith("_id")) {
+  if(!["ITEM", "LISTING", "ITEM_CATEGORY", "ITEM_RARITY"].includes(tableName) && columns[0].endsWith("_id")) {
     values[0] = uuidv4();
   }
 

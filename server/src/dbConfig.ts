@@ -87,7 +87,7 @@ export const getItemId = async (item_name: string) => {
 
 export const getCategoryId = async (category_type: string) => {
   const res = await pool.query(
-    `SELECT category_id FROM "ITEM_CATEGORY" WHERE category_type = $1`,
+    `SELECT category_id FROM "ITEM_CATEGORY" WHERE item_category = $1`,
     [category_type]
   );
   if(res.rows.length === 0) {
@@ -98,7 +98,7 @@ export const getCategoryId = async (category_type: string) => {
 
 export const getRarityId = async (rarity_type: string) => {
   const res = await pool.query(
-    `SELECT rarity_id FROM "ITEM_RARITY" WHERE rarity_type = $1`,
+    `SELECT rarity_id FROM "ITEM_RARITY" WHERE item_rarity = $1`,
     [rarity_type]
   );
   if(res.rows.length === 0) {

@@ -102,7 +102,32 @@ INSERT INTO "ITEM" (item_name, category_id, rarity_id, item_price) VALUES
     ('Wooden Shield', 5, 1, 100),
     ('Divine Shield', 5, 5, 1200),
     ('Wizard Hat', 6, 3, 500),
-    ('Crown of the King', 6, 5, 1000);
+    ('Crown of the Bard King', 6, 5, 1000);
+
+--Consumables
+INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
+    (1, '0v1w2x345'), (1, '1m2n3o456'), (1, '2n3o4p567'), (1, '3o4p5q678'), (1, '4p5q6r789'), 
+    (1, '5q6r7s890'), (1, '6r7s8t901'), (1, '7s8t9u012'), (1, '8t9u0v123'), (1, '9u0v1w234'),
+    (2, '0v1w2x345'), (2, '1m2n3o456'), (2, '2n3o4p567'), (2, '3o4p5q678'), (2, '4p5q6r789'), 
+    (2, '5q6r7s890'), (2, '6r7s8t901'), (2, '7s8t9u012'), (2, '8t9u0v123'), (2, '9u0v1w234'),
+    (3, '0v1w2x345'), (3, '1m2n3o456'), (3, '2n3o4p567'), (3, '3o4p5q678'), (3, '4p5q6r789'), 
+    (3, '5q6r7s890'), (3, '6r7s8t901'), (3, '7s8t9u012'), (3, '8t9u0v123'), (3, '9u0v1w234'),
+    (4, '0v1w2x345'), (4, '1m2n3o456'), (4, '2n3o4p567'), (4, '3o4p5q678'), (4, '4p5q6r789'), 
+    (4, '5q6r7s890'), (4, '6r7s8t901'), (4, '7s8t9u012'), (4, '8t9u0v123'), (4, '9u0v1w234');
+
+--Weapons, Armor, Headgear, Shield
+INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
+    (5, '1m2n3o456'), (5, '2n3o4p567'), (5, '5q6r7s890'),
+    (6, '1m2n3o456'), (6, '2n3o4p567'),
+    (7, '3o4p5q678'), (7, '7s8t9u012'),
+    (8, '1m2n3o456'), (8, '5q6r7s890'),
+    (9, '1m2n3o456'), (9, '5q6r7s890'),
+    (10, '0v1w2x345'), (10, '4p5q6r789'), (10, '7s8t9u012'),
+    (11, '3o4p5q678'), (11, '4p5q6r789'),
+    (12, '1m2n3o456'), (12, '5q6r7s890'),
+    (13, '4p5q6r789'), (13, '5q6r7s890'),
+    (14, '3o4p5q678'), (14, '7s8t9u012'),
+    (15, '9u0v1w234');
 
 
 INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_price) VALUES
@@ -120,26 +145,26 @@ INSERT INTO "LISTING" (character_id, quantity, listing_date, is_active, sale_pri
 ('2b3c4d567', 6, '2024-07-28', FALSE, 180),
 ('3c4d5e678', 8, '2024-09-30', TRUE, 600),
 ('4d5e6f789', 9, '2024-08-25', TRUE, 1000),
-('5e6f7g890', 10, '2024-09-01', FALSE, 800),
-('6f7g8h901', 11, '2024-09-12', TRUE, 50);
+('5e6f7g890', 10, '2024-09-01', FALSE, 800);
 
-INSERT INTO "IN_INVENTORY" (character_id, quantity) VALUES
-('1a2b3c456', 32),
-('2b3c4d567', 15),
-('3c4d5e678', 40),
-('4d5e6f789', 22),
-('5e6f7g890', 12),
-('6f7g8h901', 47),
-('7g8h9i012', 29),
-('8h9i0j123', 18),
-('9i0j1k234', 35),
-('0j1k2l345', 41),
-('1a2b3c456', 27),
-('2b3c4d567', 14),
-('3c4d5e678', 38),
-('4d5e6f789', 46),
-('5e6f7g890', 9),
-('6f7g8h901', 44);
+INSERT INTO "IN_INVENTORY" (character_id, item_id, quantity) VALUES
+('0j1k2l345', 1, 5),
+('0j1k2l345', 5, 1),
+('1a2b3c456', 2, 3),
+('1a2b3c456', 8, 1),
+('2b3c4d567', 6, 2),
+('2b3c4d567', 10, 1),
+('3c4d5e678', 7, 1),
+('3c4d5e678', 3, 4),
+('4d5e6f789', 4, 2),
+('4d5e6f789', 12, 1),
+('5e6f7g890', 9, 1),
+('5e6f7g890', 13, 1),
+('6f7g8h901', 15, 1),
+('7g8h9i012', 14, 1),
+('8h9i0j123', 11, 1),
+('9i0j1k234', 1, 6),
+('9i0j1k234', 5, 1);
 
 INSERT INTO
     "TRANSACTION" (transaction_id, seller_id, buyer_id, transaction_date)
@@ -154,4 +179,3 @@ VALUES
     ('46onzox4ew', '8h9i0j123', '0j1k2l345', '2024-12-14'),
     ('bf9ky0a20c', '9i0j1k234', '5e6f7g890', '2024-12-21'),
     ('6UFAVp7Tok', '0j1k2l345', '7g8h9i012', '2024-12-24');
-
