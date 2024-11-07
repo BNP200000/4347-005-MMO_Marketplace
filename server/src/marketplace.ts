@@ -88,6 +88,7 @@ const formatQuery = (tableName: string) => {
                 T.listing_id,
                 S.character_name as seller,
                 B.character_name as buyer,
+                T.quantity as quantity,
                 T.total_price,
                 T.transaction_date
             FROM "${tableName}" AS T
