@@ -104,30 +104,6 @@ INSERT INTO "ITEM" (item_name, category_id, rarity_id, item_price) VALUES
     ('Wizard Hat', 6, 3, 500),
     ('Crown of the Bard King', 6, 5, 1000);
 
---Consumables
-INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
-    (1, '0v1w2x345'), (1, '1m2n3o456'), (1, '2n3o4p567'), (1, '3o4p5q678'), (1, '4p5q6r789'), 
-    (1, '5q6r7s890'), (1, '6r7s8t901'), (1, '7s8t9u012'), (1, '8t9u0v123'), (1, '9u0v1w234'),
-    (2, '0v1w2x345'), (2, '1m2n3o456'), (2, '2n3o4p567'), (2, '3o4p5q678'), (2, '4p5q6r789'), 
-    (2, '5q6r7s890'), (2, '6r7s8t901'), (2, '7s8t9u012'), (2, '8t9u0v123'), (2, '9u0v1w234'),
-    (3, '0v1w2x345'), (3, '1m2n3o456'), (3, '2n3o4p567'), (3, '3o4p5q678'), (3, '4p5q6r789'), 
-    (3, '5q6r7s890'), (3, '6r7s8t901'), (3, '7s8t9u012'), (3, '8t9u0v123'), (3, '9u0v1w234'),
-    (4, '0v1w2x345'), (4, '1m2n3o456'), (4, '2n3o4p567'), (4, '3o4p5q678'), (4, '4p5q6r789'), 
-    (4, '5q6r7s890'), (4, '6r7s8t901'), (4, '7s8t9u012'), (4, '8t9u0v123'), (4, '9u0v1w234');
-
---Weapons, Armor, Headgear, Shield
-INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
-    (5, '1m2n3o456'), (5, '2n3o4p567'), (5, '5q6r7s890'),
-    (6, '1m2n3o456'), (6, '2n3o4p567'),
-    (7, '3o4p5q678'), (7, '7s8t9u012'),
-    (8, '1m2n3o456'), (8, '5q6r7s890'),
-    (9, '1m2n3o456'), (9, '5q6r7s890'),
-    (10, '0v1w2x345'), (10, '4p5q6r789'), (10, '7s8t9u012'),
-    (11, '3o4p5q678'), (11, '4p5q6r789'),
-    (12, '1m2n3o456'), (12, '5q6r7s890'),
-    (13, '4p5q6r789'), (13, '5q6r7s890'),
-    (14, '3o4p5q678'), (14, '7s8t9u012'),
-    (15, '9u0v1w234');
 
 --Consumables
 INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
