@@ -111,7 +111,7 @@ export default function Demo({ tableName }: TableProp) {
     axios
       .post(URL, formattedData)
       .then((res) => {
-        setMessage(`Successfully updated record in ${tableName}`);
+        setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
       .catch((err) => {
@@ -127,7 +127,7 @@ export default function Demo({ tableName }: TableProp) {
     axios
       .put(URL, formattedData)
       .then((res) => {
-        setMessage(`Successfully inserted into ${tableName}`);
+        setMessage(`Successfully updated record in ${tableName}`);
         handleQuery(); // Refresh the table data
       })
       .catch((err) => {
