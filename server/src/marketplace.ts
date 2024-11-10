@@ -230,6 +230,7 @@ const handleItemInsert = async (columns: string[], values: any[]) => {
 };
 
 const handleItemUpdate = async (columns: string[], values: any[]) => {
+
 };
 
 const handleInventoryOrListingInsert = async (columns: string[], values: any[]) => {
@@ -408,9 +409,14 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
     throw new Error("Internal server error");
   }
 };
-
+const updateRecord = async (tableName) => {
+  if (!tableName) {
+    throw new Error("Invalid parameters: Table name, identifier, identifier value, and data are required");
+  }
+}
 
 module.exports = {
   getTable,
   createRecord,
+  updateRecord,
 };
