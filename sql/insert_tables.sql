@@ -104,6 +104,7 @@ INSERT INTO "ITEM" (item_name, category_id, rarity_id, item_price) VALUES
     ('Wizard Hat', 6, 3, 500),
     ('Crown of the Bard King', 6, 5, 1000);
 
+
 --Consumables
 INSERT INTO "ITEM_CLASS" (item_id, class_id) VALUES
     (1, '0v1w2x345'), (1, '1m2n3o456'), (1, '2n3o4p567'), (1, '3o4p5q678'), (1, '4p5q6r789'), 
