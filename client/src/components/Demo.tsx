@@ -135,6 +135,22 @@ export default function Demo({ tableName }: TableProp) {
       })
   }
 
+  // Handle DELETE request
+  const handleDelete = () => {
+    const formattedData = formatFormData(formData);
+    setFormData(formattedData);
+    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
+    axios
+      .delete(URL, formattedData)
+      .then((res) => {
+        setMessage(`Successfully updated record in ${tableName}`);
+        handleQuery(); // Refresh the table data
+      })
+      .catch((err) => {
+        setError(err);
+      })
+  }
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, type, checked, value} = e.target;
     setFormData((prevData) => {
@@ -267,7 +283,7 @@ export default function Demo({ tableName }: TableProp) {
         <Row>
           {/*<Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>*/}
           <Col><Button variant="primary" onClick={handleInsert}>INSERT</Button></Col>
-          <Col><Button variant="primary">DELETE</Button></Col>
+          <Col><Button variant="primary" onClick = {handleDelete}>DELETE</Button></Col>
           <Col><Button variant="primary" onClick = {handleUpdate}>UPDATE</Button></Col>
         </Row>
       </Container>
