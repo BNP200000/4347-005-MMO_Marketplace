@@ -18,7 +18,7 @@ app.use("/register", require("./register"));
 // ROUTES
 
 // QUERY
-app.get("/:table", (req: Request, res: Response) => { 
+app.get("/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   marketplace
     .getTable(table)
@@ -31,13 +31,13 @@ app.get("/:table", (req: Request, res: Response) => {
 });
 
 // INSERT
-app.post("/:table", (req: Request, res: Response) => { 
+app.post("/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   const data = req.body;
 
   // Check if the request body is empty
-  if(!data || typeof data === "object" && Object.keys(data).length === 0) {
-    res.status(400).json({error: "Request body cannot be empty"});
+  if (!data || typeof data === "object" && Object.keys(data).length === 0) {
+    res.status(400).json({ error: "Request body cannot be empty" });
   }
 
   // Insert new record into the table if it does not exist
@@ -45,21 +45,27 @@ app.post("/:table", (req: Request, res: Response) => {
   marketplace.createRecord(table, data).then((response) => {
     res.status(201).json(response);
   })
-  .catch((error) => {
-    console.error(`Response was: ${error}`);
-    res.status(500).json({error: "Internal server error"});
-  });
+    .catch((error) => {
+      console.error(`Response was: ${error}`);
+      res.status(500).json({ error: "Internal server error" });
+    });
 });
 
 // UPDATE
 app.put("/:table", (req: Request, res: Response) => {
 
+  const table = req.params.table;
+  const data = req.body;
+
+  if (!data || typeof data === "object" && Object.keys(data).length === 0) {
+    res.status(400).json({ error: "Request body cannot be empty" });
+  }
 });
 
 // DELETE
 app.delete("/:table", (req: Request, res: Response) => {
 
-}); 
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
