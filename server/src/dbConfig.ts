@@ -85,4 +85,26 @@ export const getItemId = async (item_name: string) => {
   return res.rows[0].item_id;
 };
 
+export const getCategoryId = async (category_type: string) => {
+  const res = await pool.query(
+    `SELECT category_id FROM "ITEM_CATEGORY" WHERE item_category = $1`,
+    [category_type]
+  );
+  if(res.rows.length === 0) {
+    throw new Error(`Item Category ${category_type} does not exist`);
+  }
+  return res.rows[0].category_id
+}
+
+export const getRarityId = async (rarity_type: string) => {
+  const res = await pool.query(
+    `SELECT rarity_id FROM "ITEM_RARITY" WHERE item_rarity = $1`,
+    [rarity_type]
+  );
+  if(res.rows.length === 0) {
+    throw new Error(`Item Rarity ${rarity_type} does not exist`);
+  }
+  return res.rows[0].rarity_id
+}
+
 export default pool;

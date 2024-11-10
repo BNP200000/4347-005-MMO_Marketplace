@@ -89,8 +89,6 @@ export default function Demo({ tableName }: TableProp) {
       formData.total_price = 0;
     }
 
-
-
     const formattedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key, 
@@ -107,18 +105,16 @@ export default function Demo({ tableName }: TableProp) {
 
   // Handle POST request
   const handleInsert = () => {
-    setFormData(formatFormData(formData));
-
-    console.log(`DATA is ${JSON.stringify(formData, null, 2)}`);
-    
+    const formattedData = formatFormData(formData);
+    setFormData(formattedData);
+    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
-      .post(URL, formData)
+      .post(URL, formattedData)
       .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
       .catch((err) => {
-        console.log(`${JSON.stringify(formData, null, 2)}`);
         setError(err);
       })
   }
