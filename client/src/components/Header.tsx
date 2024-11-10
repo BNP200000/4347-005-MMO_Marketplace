@@ -42,6 +42,13 @@ export default function Header() {
             >
               Pet
             </Nav.Link>
+            <Nav.Link
+              href="/listing"
+              className="mx-2"
+              onClick={() => router.push("/listing")}
+            >
+              Listing
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
 
