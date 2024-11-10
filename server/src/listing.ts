@@ -7,7 +7,6 @@ router.post("/", async (req: Request, res: Response) => {
   const listingid = req.body.listingId;
 
   if (!listingid) {
-    console.log("fuck");
     return res
       .status(400)
       .json({ error: "Listing ID required." });
@@ -16,7 +15,27 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     // Fetch the listing and other required attributes from the database
     const result = await pool.query(
-      `SELECT * FROM "LISTING" WHERE listing_id = $1`,
+      `SELECT
+        L.listing_id,
+        I.item_name,
+        IC.item_category,
+        IR.item_rarity,
+        L.sale_price,
+        STRING_AGG(C.class_name, ', ') AS allowed_classes
+      FROM "LISTING" as L
+        LEFT JOIN "ITEM" AS I ON L.item_id = I.item_id
+        LEFT JOIN "ITEM_CATEGORY" AS IC ON I.category_id = IC.category_id
+        LEFT JOIN "ITEM_RARITY" AS IR ON I.rarity_id = IR.rarity_id
+        LEFT JOIN "ITEM_CLASS" AS IT ON I.item_id = IT.item_id
+        LEFT JOIN "CLASS" AS C ON IT.class_id = C.class_id
+      WHERE L.listing_id = $1
+      GROUP BY
+        L.listing_id,
+        I.item_name,
+        IC.item_category,
+        IR.item_rarity,
+        L.sale_price;
+      `,
       [listingid]
     );
 
@@ -38,13 +57,11 @@ router.post("/", async (req: Request, res: Response) => {
     // (You might want to send a token instead for a real-world application)
     res.json({
       listing: {
-        listing_id: listing.listing_id,
-        character_id: listing.character_id,
-        item_id: listing.item_id,
-        quantity: listing.quantity,
-        listing_date: listing.listing_date,
-        is_active: listing.is_active,
+        item_name: listing.item_name,
+        item_category: listing.item_category,
+        item_rarity: listing.item_rarity,
         sale_price: listing.sale_price,
+        item_allowed_classes: listing.allowed_classes,
       },
     });
 
