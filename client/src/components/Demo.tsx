@@ -111,6 +111,21 @@ export default function Demo({ tableName }: TableProp) {
     axios
       .post(URL, formattedData)
       .then((res) => {
+        setMessage(`Successfully updated record in ${tableName}`);
+        handleQuery(); // Refresh the table data
+      })
+      .catch((err) => {
+        setError(err);
+      })
+  }
+
+  const handleUpdate = () => {
+    const formattedData = formatFormData(formData);
+    setFormData(formattedData);
+    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
+    axios
+      .post(URL, formattedData)
+      .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
@@ -252,7 +267,7 @@ export default function Demo({ tableName }: TableProp) {
           {/*<Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>*/}
           <Col><Button variant="primary" onClick={handleInsert}>INSERT</Button></Col>
           <Col><Button variant="primary">DELETE</Button></Col>
-          <Col><Button variant="primary">UPDATE</Button></Col>
+          <Col><Button variant="primary" onClick = {handleUpdate}>UPDATE</Button></Col>
         </Row>
       </Container>
 
