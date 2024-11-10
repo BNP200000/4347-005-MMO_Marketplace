@@ -53,13 +53,21 @@ app.post("/:table", (req: Request, res: Response) => {
 
 // UPDATE
 app.put("/:table", (req: Request, res: Response) => {
-
+  console.log("Update Request")
   const table = req.params.table;
   const data = req.body;
 
   if (!data || typeof data === "object" && Object.keys(data).length === 0) {
     res.status(400).json({ error: "Request body cannot be empty" });
   }
+
+  marketplace.updateRecord(table, data).then((response) => {
+    res.status(201).json(response);
+  })
+    .catch((error) => {
+      console.error(`Response was: ${error}`);
+      res.status(500).json({ error: "Internal server error" });
+    });
 });
 
 // DELETE
