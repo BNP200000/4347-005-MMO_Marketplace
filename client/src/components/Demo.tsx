@@ -109,7 +109,7 @@ export default function Demo({ tableName }: TableProp) {
     setFormData(formattedData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
-      .post(URL, formattedData)
+      .put(URL, formattedData)
       .then((res) => {
         setMessage(`Successfully updated record in ${tableName}`);
         handleQuery(); // Refresh the table data
