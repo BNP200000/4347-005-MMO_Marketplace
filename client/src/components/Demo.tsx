@@ -109,7 +109,7 @@ export default function Demo({ tableName }: TableProp) {
     setFormData(formattedData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
-      .put(URL, formattedData)
+      .post(URL, formattedData)
       .then((res) => {
         setMessage(`Successfully updated record in ${tableName}`);
         handleQuery(); // Refresh the table data
@@ -119,12 +119,13 @@ export default function Demo({ tableName }: TableProp) {
       })
   }
 
+  // Handle PUT request
   const handleUpdate = () => {
     const formattedData = formatFormData(formData);
     setFormData(formattedData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
-      .post(URL, formattedData)
+      .put(URL, formattedData)
       .then((res) => {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
