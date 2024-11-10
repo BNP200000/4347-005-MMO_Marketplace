@@ -2,7 +2,16 @@
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import axios from "axios";
-import { Col, Container, Row, Form, Button } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+import Image from "next/image";
+
+import PlaceholderImage from "../app/placehold_item_image.png";
+import ConsumableImage from "../app/temp_consumable_item.png";
+import WeaponImage from "../app/temp_weapon_item.png";
+import ArmorImage from "../app/temp_armor_item.png";
+import AccessoryImage from "../app/temp_accessory_item.png";
+import ShieldImage from "../app/temp_shield_item.png";
+import HeadgearImage from "../app/temp_headgear_item.png";
 
 const PORT = process.env.PORT || 5001;
 
@@ -11,8 +20,11 @@ const PORT = process.env.PORT || 5001;
 export default function ListingHeader() {
   const params = useParams<{ listingId: string }>();
   const [listingId, setListingId] = useState(params.listingId);
-  const [characterName, setCharacterName] = useState("bingus");
+  const [characterName, setCharacterName] = useState("William");
   const [category, setCategory] = useState("");
+  const [rarity, setRarity] = useState("");
+  const [price, setPrice] = useState("");
+  const [allowedClasses, setAllowedClasses] = useState(""); // Should maybe be something besides a string?
 
   const importInfo = async () => {
 
@@ -26,7 +38,7 @@ export default function ListingHeader() {
       setCharacterName(res.data.error);
       return res.data.error;
     } else {
-      setCharacterName(res.data.listing.character_id);
+      // setCharacterName(res.data.listing.character_id);
       return res.data.listing;
     }
   } catch {
@@ -52,12 +64,20 @@ importInfo();
         <Col>
           <p>Name: {characterName}</p>
           <p>Category: {category}</p>
-          <p>Rarity</p>
-          <p>Price</p>
-          <p>Allowed Classes</p>
+          <p>Rarity: {rarity}</p>
+          <p>Price: {price}</p>
+          <p>Allowed Classes: {allowedClasses}</p>
         </Col>
         <Col>
-          <p>funny image here later</p>
+          <Image
+            src={PlaceholderImage}
+            alt="Item"
+            width={200}
+            height={200}
+            quality={100}
+            className="d-inline-block align-top"
+            style={{objectFit: "contain", marginRight: "0.75rem"}}
+          />
         </Col>
       </Row>
     </Container>
