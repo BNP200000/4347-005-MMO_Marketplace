@@ -14,19 +14,7 @@ export default function ListingHeader() {
   const [characterName, setCharacterName] = useState("bingus");
   const [category, setCategory] = useState("");
 
-  // Axios.get or something similar using listingId
-  // Communicates with index.ts
-
-  // Study how login works
-  // Client side, LoginForm.tsx uses axios.post to send a request with username and password
-  // (You could do the same here, but with listingId)
-  // Then server side, login.ts has a post that handles the request and returns a response
-  // login.ts uses queries pretty directly
-
-  /*useEffect(() => {
-  async function grabCrud (){*/
-  const importInfo = async (/*e: React.FormEvent*/) => {
-    // e.preventDefault();
+  const importInfo = async () => {
 
   try {
     const res = await axios.post(`http://localhost:${PORT}/listing`, {
@@ -34,14 +22,10 @@ export default function ListingHeader() {
     });
     // Check for error message in response
     if (res.data.error) {
-      // setError(res.data.error);
+      // Setting character name as a terrible type of debugging
       setCharacterName(res.data.error);
       return res.data.error;
     } else {
-      // Set login data in the cookie
-      // setLoginCookie({ username, password });
-      // Redirect to the home page
-      // router.push("/");
       setCharacterName(res.data.listing.character_id);
       return res.data.listing;
     }
@@ -57,10 +41,6 @@ export default function ListingHeader() {
 };
 
 importInfo();
-
-/*}
-grabCrud();
-}, []);*/
 
   return(
     <Container>
