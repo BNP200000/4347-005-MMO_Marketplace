@@ -409,6 +409,8 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
     throw new Error("Internal server error");
   }
 };
+
+// Handles updating the record in the database
 const updateRecord = async (tableName) => {
   console.log("Testing update record");
   if (!tableName) {
@@ -416,8 +418,16 @@ const updateRecord = async (tableName) => {
   }
 }
 
+// Handles deleting the record in the database
+const deleteRecord = async (tableName) => {
+  console.log("Testing update record");
+  if (!tableName) {
+    throw new Error("Invalid parameters: Table name, identifier, identifier value, and data are required");
+  }
+}
 module.exports = {
   getTable,
   createRecord,
   updateRecord,
+  deleteRecord,
 };
