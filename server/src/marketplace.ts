@@ -357,7 +357,6 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         break;
       case "ITEM":
         handler = handleItemInsert;
-        console.log("APPLE");
         break;
       case "IN_INVENTORY":
       case "LISTING":

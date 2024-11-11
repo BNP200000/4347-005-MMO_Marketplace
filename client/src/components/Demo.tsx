@@ -115,9 +115,6 @@ export default function Demo({ tableName }: TableProp) {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
-      .catch((err) => {
-        setError(err);
-      })
   }
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
