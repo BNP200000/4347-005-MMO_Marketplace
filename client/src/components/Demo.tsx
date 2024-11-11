@@ -89,6 +89,8 @@ export default function Demo({ tableName }: TableProp) {
       formData.total_price = 0;
     }
 
+
+
     const formattedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key, 
@@ -107,7 +109,6 @@ export default function Demo({ tableName }: TableProp) {
   const handleInsert = () => {
     const formattedData = formatFormData(formData);
     setFormData(formattedData);
-    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
       .post(URL, formattedData)
       .then((res) => {
