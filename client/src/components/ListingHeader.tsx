@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import axios from "axios";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import Image from "next/image";
 
 import DefaultImage from "../app/item_images/placehold_item_image.png";
@@ -21,6 +21,7 @@ const PORT = process.env.PORT || 5001;
 export default function ListingHeader() {
   const params = useParams<{ listingId: string }>();
   const [listingId, setListingId] = useState(params.listingId);
+  const [error, setError] = useState<string | null>(null);
   // Info to be displayed on the page
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -37,13 +38,8 @@ export default function ListingHeader() {
       params: {listingId}
     });
     // Check for error message in response
-    // TODO note: for some reason, an invalid listing ID doesn't return res.data.error but instead leads to a catch
-    // I thought it might be because of status 401 but seemingly not? idk
     if (res.data.error) {
-      // Setting item name as a terrible type of debugging
-      // Will change this to implement an actual error display
-      setName(res.data.error);
-      return res.data.error;
+      setError(res.data.error);
     // No error
     } else {
       // Set the page's displayed info
@@ -74,7 +70,7 @@ export default function ListingHeader() {
       return res.data.listing;
     }
   } catch {
-    // setError("An error occurred. Please try again.");
+    setError("An error occurred. Please try again.");
     setImage(UnknownImage);
   }
 };
@@ -83,6 +79,7 @@ importInfo();
 
   return(
     <Container>
+      {error && <Alert variant="danger">{error}</Alert>}
       <Row><Col>
         <h1>Listing #{params.listingId}</h1>
         <h2>Item Info</h2>
