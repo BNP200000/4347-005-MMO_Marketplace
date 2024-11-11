@@ -89,7 +89,11 @@ export default function Demo({ tableName }: TableProp) {
       formData.total_price = 0;
     }
 
-
+    Object.keys(formData).forEach(key => {
+      if(key.endsWith("_date") && (formData[key].trim() === "" || formData[key] === null)) {
+        formData[key] = new Date().toISOString().split("T")[0];
+      }
+    });
 
     const formattedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
