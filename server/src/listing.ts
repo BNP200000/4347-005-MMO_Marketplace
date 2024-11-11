@@ -3,8 +3,8 @@ import { Request, Response } from "express";
 import pool from "./dbConfig";
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
-  const listingid = req.body.listingId;
+router.get("/", async (req: Request, res: Response) => {
+  const listingid = req.query.listingId as string;
 
   if (!listingid) {
     return res
@@ -64,21 +64,6 @@ router.post("/", async (req: Request, res: Response) => {
         item_allowed_classes: listing.allowed_classes,
       },
     });
-
-    // Authentication successful, return the user information
-    // (You might want to send a token instead for a real-world application)
-    /*res.json({
-      message: "Login successful",
-      user: {
-        user_id: user.user_id,
-        username: user.username,
-        email: user.email,
-        account_type: user.account_type,
-        has_free_chat: user.has_free_chat,
-        has_safe_chat: user.has_safe_chat,
-        has_safe_server_access: user.has_safe_server_access,
-      },
-    });*/
   } catch (error) {
     console.error("Error while checking listing:", error);
     res.status(500).json({ error: "An error occurred when viewing a listing." });

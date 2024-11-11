@@ -252,7 +252,7 @@ const handleInventoryOrListingInsert = async (columns: string[], values: any[]) 
   insertValues[itemIdx] = itemId;
 
   const placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
-  const query = `INSERT INTO "${insertCols.includes("quantity") ? "IN_INVENTORY" : "LISTING"}"
+  const query = `INSERT INTO "${insertCols.includes("listing_date") ? "LISTING" : "IN_INVENTORY"}"
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
@@ -390,8 +390,6 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         if (results && results.rows) {
           const row = results.rows[0];
           resolve(`Added ${JSON.stringify(row)} to ${tableName}`);
-          
-          
           // Add the list of classes that are allowed to an item into
           // the ITEM_CLASS table
           await handleItemClassInsert(tableName, columns, values, row);

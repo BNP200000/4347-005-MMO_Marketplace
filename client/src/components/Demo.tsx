@@ -20,7 +20,7 @@ export default function Demo({ tableName }: TableProp) {
   const [showForm, setShowForm] = useState(false);
   const [classes, setClasses] = useState<string[]>([]);
   const PORT = process.env.PORT || 5001;
-  const URL = `http://localhost:${PORT}/${tableName}`;
+  const URL = `http://localhost:${PORT}/table/${tableName}`;
 
   // Filter out columns that should not be modifiable
   const filterOut = ["class_id", "character_id", "user_id", "item_id", "listing_id", "transaction_id", "total_price"];
@@ -49,7 +49,7 @@ export default function Demo({ tableName }: TableProp) {
             acc[col] = value;
           } else if(col === "allowed_classes") {
             // Get the class names from the CLASS table
-            axios.get(`http://localhost:${PORT}/CLASS`)
+            axios.get(`http://localhost:${PORT}/table/CLASS`)
             .then((classRes) => {
               const classNames = classRes.data.map((classItem: any) => classItem.class_name);
               setClasses(classNames);
@@ -115,6 +115,9 @@ export default function Demo({ tableName }: TableProp) {
         setMessage(`Successfully inserted into ${tableName}`);
         handleQuery(); // Refresh the table data
       })
+      .catch((err) => {
+        setError(err);
+      });
   }
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {

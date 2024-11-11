@@ -19,7 +19,7 @@ app.use("/listing", require("./listing"));
 // ROUTES
 
 // QUERY
-app.get("/:table", (req: Request, res: Response) => { 
+app.get("/table/:table", (req: Request, res: Response) => { 
   const table = req.params.table;
   marketplace
     .getTable(table)
@@ -32,7 +32,7 @@ app.get("/:table", (req: Request, res: Response) => {
 });
 
 // INSERT
-app.post("/:table", (req: Request, res: Response) => { 
+app.post("/table/:table", (req: Request, res: Response) => { 
   const table = req.params.table;
   const data = req.body;
 
@@ -47,7 +47,7 @@ app.post("/:table", (req: Request, res: Response) => {
     res.status(201).json(response);
   })
   .catch((error) => {
-    console.error(`Response was: ${error}`);
+    console.error(`Response was: ${error.message}`);
     res.status(500).json({error: "Internal server error"});
   });
 });

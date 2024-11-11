@@ -33,8 +33,8 @@ export default function ListingHeader() {
   const importInfo = async () => {
 
   try {
-    const res = await axios.post(`http://localhost:${PORT}/listing`, {
-      listingId
+    const res = await axios.get(`http://localhost:${PORT}/listing`, {
+      params: {listingId}
     });
     // Check for error message in response
     // TODO note: for some reason, an invalid listing ID doesn't return res.data.error but instead leads to a catch
@@ -77,7 +77,6 @@ export default function ListingHeader() {
     // setError("An error occurred. Please try again.");
     setImage(UnknownImage);
   }
-
 };
 
 importInfo();
