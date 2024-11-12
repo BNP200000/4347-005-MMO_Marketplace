@@ -1,3 +1,4 @@
+//Section displaying listings 
 "use client";
 
 import React, { useState } from 'react';
@@ -6,18 +7,19 @@ import { ListingCard } from './ListingCard';
 import { Listing, Character } from '../types';  
 import CreateListingModal from './CreateListingModal';
 
-// Define the props for ListingsSection component
 interface ListingsSectionProps {
   title: string;
-  listings: Listing[]; // List of listings to display
-  showNewListingButton?: boolean; // Optional button to create a new listing
-  characterId: string; // Required characterId prop
-  characterInfo: Character; // Required characterInfo prop to access character_name
+  listings: Listing[];
+  showNewListingButton?: boolean;
+  characterId: string;
+  characterInfo: Character;
   onCreateListing: (listingData: {
-    item_id: string;
+    character: string;     
+    item: string;        
     quantity: number;
+    listing_date: string;
     sale_price: number;
-  }) => Promise<void>; // Function to handle new listing creation
+  }) => Promise<void>;
 }
 
 export default function ListingsSection({ 
@@ -28,7 +30,7 @@ export default function ListingsSection({
   characterInfo,
   onCreateListing 
 }: ListingsSectionProps) {
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModal, setShowModal] = useState(false);  
 
   return (
     <Col md={6}>

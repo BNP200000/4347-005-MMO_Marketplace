@@ -1,4 +1,4 @@
-//page.tsx
+//Page that lists the listings of the selected character and all listings and can create new listings
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Spinner, Row } from 'react-bootstrap';
@@ -8,7 +8,6 @@ import CharacterHeader from '@/components/CharacterHeader';
 import ListingsSection from '@/components/ListingsSection';
 import { Character, Listing } from '../../../../types';
 
-// Backend URL from environment variable, fallback to local if not defined
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001';
 
 export default function ListingsPage() {
@@ -17,7 +16,6 @@ export default function ListingsPage() {
     ? params.characterId[0] 
     : params.characterId;
 
-  // State variables for storing data
   const [myListings, setMyListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [characterInfo, setCharacterInfo] = useState<Character | null>(null);
@@ -68,25 +66,26 @@ export default function ListingsPage() {
 
   // Function to create a new listing
   const handleCreateListing = async (listingData: {
-    item_id: string;
+    character: string;
+    item: string;
     quantity: number;
+    listing_date: string;
     sale_price: number;
   }) => {
     try {
       if (!characterInfo) throw new Error('Character information not available');
       
       const newListing = {
-        character_id: characterInfo.character_id, // Include character ID
-        item_id: listingData.item_id,
+        character: characterInfo.character_name,
+        item: listingData.item,
         quantity: listingData.quantity,
-        listing_date: new Date().toISOString(),
+        listing_date: listingData.listing_date,
         is_active: true,
         sale_price: listingData.sale_price,
       };
-
-      // Post the new listing to the backend
+  
       await axios.post(`${BACKEND_URL}/table/LISTING`, newListing);
-      fetchCharacterAndListings(); // Refresh the listings after creation
+      fetchCharacterAndListings();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create listing');
     }
@@ -125,23 +124,25 @@ export default function ListingsPage() {
       <Container className="p-4">
         <h1 className="text-center mb-4">Listings</h1>
         <Row>
-          {/* Render My Listings section */}
+          {/* My Listings section */}
           <ListingsSection 
             title="My Listings" 
             listings={myListings}
-            showNewListingButton={true} // Allow creating a new listing
+            showNewListingButton={true}
             characterId={characterInfo.character_id} 
             characterInfo={characterInfo} 
             onCreateListing={handleCreateListing}
           />
-          {/* Render All Listings section excluding the current character's listings */}
+          {/* All Listings section */}
           <ListingsSection 
             title="All Listings" 
             listings={allListings.filter(
               listing => listing.character_id !== characterId
             )}
             characterId={characterInfo.character_id} 
-            characterInfo={characterInfo} 
+            characterInfo={characterInfo}
+            onCreateListing={handleCreateListing}   
+            showNewListingButton={false}  
           />
         </Row>
       </Container>

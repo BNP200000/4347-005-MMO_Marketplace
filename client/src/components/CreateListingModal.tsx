@@ -1,38 +1,42 @@
-"use client";
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
+//CreateListingModal that gives a form for inserting new listings
+"use client";  
 
+import React, { useState, useEffect } from 'react';  
+import { Modal, Button, Form } from 'react-bootstrap'; 
+import axios from 'axios'; 
+
+ 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001';
 
-// Define the props for CreateListingModal component
+ 
 interface CreateListingModalProps {
-  show: boolean;
-  onHide: () => void;
-  onCreateListing: (listingData: {
-    character_id: string;
-    item_id: string;
+  show: boolean;  
+  onHide: () => void;  
+  onCreateListing: (listingData: { 
+    character: string;
+    item: string;
     quantity: number;
     listing_date: string;
     sale_price: number;
   }) => Promise<void>;
-  characterId: string;
-  characterName: string;
+  characterId: string;  
+  characterName: string;  
 }
 
-// Define the types for dropdown options and new listing state
+ 
 interface DropdownOption {
   id: string;
   name: string;
 }
 
+// Define the structure of the new listing's state
 interface NewListingState {
-  item_id: string;
-  quantity: number;
-  listing_date: string;
-  sale_price: number;
+  item_name: string;   
+  quantity: number; 
+  listing_date: string;  
+  sale_price: number;  
 }
-
+ 
 export default function CreateListingModal({ 
   show, 
   onHide, 
@@ -40,82 +44,86 @@ export default function CreateListingModal({
   characterId,
   characterName
 }: CreateListingModalProps) {
+  // State to manage the form inputs
   const [newListing, setNewListing] = useState<NewListingState>({
-    item_id: '',
-    quantity: 1,
-    listing_date: new Date().toISOString().slice(0, 10),
-    sale_price: 0,
+    item_name: '',    
+    quantity: 1,     
+    listing_date: new Date().toISOString().slice(0, 10), // Default to today's date
+    sale_price: 0,   
   });
 
-  const [error, setError] = useState(''); // State to handle errors
-  const [items, setItems] = useState<DropdownOption[]>([]); // State to store fetched items
-
-  // Fetch available items when the modal is shown
+  const [error, setError] = useState('');
+  const [items, setItems] = useState<DropdownOption[]>([]);
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/listing/items`);
+        const response = await axios.get(`${BACKEND_URL}/listing/items`); // Fetch items from backend
         if (Array.isArray(response.data)) {
-          setItems(response.data);
-          setError(''); // Reset error state on successful data fetch
+          setItems(response.data); // If data is an array, set it to the items state
+          setError(''); 
         } else {
-          setError('Failed to load items');
+          setError('Failed to load items'); // Set error if the response format is incorrect
         }
       } catch (error) {
-        // Handle axios and other errors
         if (axios.isAxiosError(error)) {
-          setError(`Failed to load data: ${error.message}`);
+          setError(`Failed to load data: ${error.message}`); 
         } else {
-          setError('Failed to load data');
+          setError('Failed to load data'); 
         }
       }
     };
 
+    // Fetch items only if the modal is visible
     if (show) {
-      fetchItems(); // Fetch items only when the modal is visible
+      fetchItems();
     }
-  }, [show]);
+  }, [show]); 
 
-  // Handle form submission to create a new listing
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(''); // Reset error state before submission
+    e.preventDefault(); // Prevent default form submission
+    setError(''); // Reset error before submission
 
     try {
-      // Create the new listing
+      // Call the onCreateListing callback with the form data
       await onCreateListing({
-        character_id: characterId,
-        item_id: newListing.item_id,
-        quantity: newListing.quantity,
-        listing_date: newListing.listing_date,
-        sale_price: newListing.sale_price,
+        character: characterName, 
+        item: newListing.item_name,  
+        quantity: newListing.quantity,  
+        listing_date: newListing.listing_date,  
+        sale_price: newListing.sale_price, 
       });
-      onHide(); // Close the modal after successful listing creation
+      onHide(); 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create listing');
     }
   };
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide}> {/* Modal visibility controlled by 'show' prop */}
       <Modal.Header closeButton>
         <Modal.Title>Create New Listing</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {error && <div className="alert alert-danger">{error}</div>} {/* Display error if any */}
+        {/* Display error message if there is any */}
+        {error && <div className="alert alert-danger">{error}</div>}
+        
+        {/* Display character information */}
         <p><strong>Character:</strong> {characterName} (ID: {characterId})</p>
+        
+        {/* Form for creating the new listing */}
         <Form onSubmit={handleSubmit}>
-          {/* Item selection dropdown */}
+          {/* Item selection */}
           <Form.Group className="mb-3">
             <Form.Label>Item</Form.Label>
             <Form.Select
-              value={newListing.item_id}
-              onChange={(e) => setNewListing({ ...newListing, item_id: e.target.value })}
+              value={newListing.item_name}  // Controlled input for item name
+              onChange={(e) => setNewListing({ ...newListing, item_name: e.target.value })}
               required
             >
               <option value="">Select an Item</option>
               {items.map((item) => (
-                <option key={item.id} value={item.id}>
+                <option key={item.id} value={item.name}>  {/* Use item name as value */}
                   {item.name}
                 </option>
               ))}
@@ -157,7 +165,7 @@ export default function CreateListingModal({
             />
           </Form.Group>
 
-          {/* Modal action buttons */}
+          {/* Buttons to cancel or submit the form */}
           <div className="d-flex justify-content-end gap-2">
             <Button variant="secondary" onClick={onHide}>
               Cancel

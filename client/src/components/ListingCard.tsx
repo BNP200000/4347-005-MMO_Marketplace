@@ -1,3 +1,4 @@
+//Card component that displays listing details with "View" button.
 "use client";
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
