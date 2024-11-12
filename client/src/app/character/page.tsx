@@ -5,16 +5,17 @@ import Link from "next/link";
 export default function CharacterListingsPage() {
   return (
     <div className={style.col}>
-      <h1>Character Listings</h1>
+      <h1>Character & Individual Listings</h1>
       <Container>
         <Row>
           <Col>
             <p>hello</p>
             <p>this page is temporary</p>
-            <p>after you click the link to the right, you can directly change the URL for other characters</p>
+            <p>after you click the link to the right, you can directly change the URL for other characters/listings</p>
           </Col>
           <Col>
-            <Link href="/character/1a2b3c456/listings">Click for Listings for Character 1a2b3c456</Link>
+            <p><Link href="/character/1a2b3c456/listings">Click for Listings for Character 1a2b3c456</Link></p>
+            <p><Link href="/character/1a2b3c456/listings/1">Click for Listing 1 under Character 1a2b3c456</Link></p>
           </Col>
         </Row>
       </Container>

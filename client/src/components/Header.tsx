@@ -47,14 +47,7 @@ export default function Header() {
               className="mx-2"
               onClick={() => router.push("/character")}
             >
-              Character Listings
-            </Nav.Link>
-            <Nav.Link
-              href="/listing"
-              className="mx-2"
-              onClick={() => router.push("/listing")}
-            >
-              Listing
+              Character & Individual Listings
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
