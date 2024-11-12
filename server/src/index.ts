@@ -19,11 +19,7 @@ app.use("/listing", require("./listing"));
 // ROUTES
 
 // QUERY
-<<<<<<< HEAD
-app.get("/table/:table", (req: Request, res: Response) => { 
-=======
-app.get("/:table", (req: Request, res: Response) => {
->>>>>>> brandon_branch
+app.get("/table/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   marketplace
     .getTable(table)
@@ -36,11 +32,7 @@ app.get("/:table", (req: Request, res: Response) => {
 });
 
 // INSERT
-<<<<<<< HEAD
-app.post("/table/:table", (req: Request, res: Response) => { 
-=======
-app.post("/:table", (req: Request, res: Response) => {
->>>>>>> brandon_branch
+app.post("/table/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   const data = req.body;
 
@@ -54,21 +46,14 @@ app.post("/:table", (req: Request, res: Response) => {
   marketplace.createRecord(table, data).then((response) => {
     res.status(201).json(response);
   })
-<<<<<<< HEAD
-  .catch((error) => {
-    console.error(`Response was: ${error.message}`);
-    res.status(500).json({error: "Internal server error"});
-  });
-=======
     .catch((error) => {
-      console.error(`Response was: ${error}`);
+      console.error(`Response was: ${error.message}`);
       res.status(500).json({ error: "Internal server error" });
     });
->>>>>>> brandon_branch
 });
 
 // UPDATE
-app.put("/:table", (req: Request, res: Response) => {
+app.put("/table/:table", (req: Request, res: Response) => {
   console.log("Update Request")
   const table = req.params.table;
   const data = req.body;
@@ -87,7 +72,7 @@ app.put("/:table", (req: Request, res: Response) => {
 });
 
 // DELETE
-app.delete("/:table", (req: Request, res: Response) => {
+app.delete("/table/:table", (req: Request, res: Response) => {
 
 });
 
