@@ -420,7 +420,7 @@ const updateRecord = async (tableName) => {
 
 // Handles deleting the record in the database
 const deleteRecord = async (tableName) => {
-  console.log("Testing update record");
+  console.log("Testing delete record");
   if (!tableName) {
     throw new Error("Invalid parameters: Table name, identifier, identifier value, and data are required");
   }
