@@ -69,10 +69,12 @@ const formatQuery = (tableName: string) => {
             LEFT JOIN
                 "ITEM" AS I ON I.item_id = V.item_id;`,
 
-    "LISTING": `SELECT
+"LISTING": `SELECT
                 L.listing_id,
-                C.character_name AS character,
-                I.item_name AS item,
+                L.character_id,
+                C.character_name AS character_name,
+                L.item_id,
+                I.item_name AS item_name,
                 L.quantity,
                 L.listing_date,
                 L.is_active,

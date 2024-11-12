@@ -70,4 +70,26 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+//Added so user can see a dropdown of availiable items to add
+router.get("/items", async (req: Request, res: Response) => {
+  try {
+    // Simple query to get all items
+    const result = await pool.query(`
+      SELECT 
+        item_id AS id,
+        item_name AS name
+      FROM "ITEM"
+      ORDER BY item_name;
+    `);
+
+    // Add debug logging
+    console.log('Query result:', result.rows);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching items:", error);
+    res.status(500).json({ error: "An error occurred while fetching items" });
+  }
+});
+
 module.exports = router;

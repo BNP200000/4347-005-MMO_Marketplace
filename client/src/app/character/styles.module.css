@@ -1,0 +1,29 @@
+.col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 1rem 0;
+    gap: 1rem;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 1rem 0;
+    gap: 1rem;
+}
+
+.btnRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+}
+
+.alignCenter {
+    align-items: center;
+}

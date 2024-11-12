@@ -43,6 +43,13 @@ export default function Header() {
               Pet
             </Nav.Link>
             <Nav.Link
+              href="/character"
+              className="mx-2"
+              onClick={() => router.push("/character")}
+            >
+              Character Listings
+            </Nav.Link>
+            <Nav.Link
               href="/listing"
               className="mx-2"
               onClick={() => router.push("/listing")}
