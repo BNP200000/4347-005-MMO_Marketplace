@@ -20,6 +20,7 @@ router.get("/", async (req: Request, res: Response) => {
         I.item_name,
         IC.item_category,
         IR.item_rarity,
+        L.quantity,
         L.sale_price,
         STRING_AGG(C.class_name, ', ') AS allowed_classes
       FROM "LISTING" as L
@@ -34,6 +35,7 @@ router.get("/", async (req: Request, res: Response) => {
         I.item_name,
         IC.item_category,
         IR.item_rarity,
+        L.quantity,
         L.sale_price;
       `,
       [listingid]
@@ -46,12 +48,6 @@ router.get("/", async (req: Request, res: Response) => {
 
     const listing = result.rows[0];
 
-    // Compare the provided password with the stored hashed password
-    /*const isMatch = password == user.password;
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid username or password." });
-    }*/
-
     // Listing was found, return all of its info
     // (Not all info may be necessary- reviwe this part)
     // (You might want to send a token instead for a real-world application)
@@ -61,6 +57,7 @@ router.get("/", async (req: Request, res: Response) => {
         item_category: listing.item_category,
         item_rarity: listing.item_rarity,
         sale_price: listing.sale_price,
+        quantity: listing.quantity,
         item_allowed_classes: listing.allowed_classes,
       },
     });
@@ -70,7 +67,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-//Added so user can see a dropdown of availiable items to add
+// Added so user can see a dropdown of availiable items to add
 router.get("/items", async (req: Request, res: Response) => {
   try {
     // Simple query to get all items

@@ -16,9 +16,7 @@ import UnknownImage from "../app/item_images/temp_unknown_item.png";
 
 const PORT = process.env.PORT || 5001;
 
-// TODO: Rename this whole file
-
-export default function ListingHeader() {
+export default function SingleListingSection() {
   const params = useParams<{ listingId: string }>();
   const [listingId, setListingId] = useState(params.listingId);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +24,7 @@ export default function ListingHeader() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [rarity, setRarity] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [allowedClasses, setAllowedClasses] = useState("");
 
@@ -46,6 +45,7 @@ export default function ListingHeader() {
       setName(res.data.listing.item_name);
       setCategory(res.data.listing.item_category);
       setRarity(res.data.listing.item_rarity);
+      setQuantity(res.data.listing.quantity);
       setPrice(res.data.listing.sale_price);
       setAllowedClasses(res.data.listing.item_allowed_classes);
 
@@ -89,7 +89,8 @@ importInfo();
           <p>Name: {name}</p>
           <p>Category: {category}</p>
           <p>Rarity: {rarity}</p>
-          <p>Listed price: {price}</p>
+          <p>Quantity: {quantity}</p>
+          <p>Unit price: {price}</p>
           <p>Allowed Classes: {allowedClasses}</p>
         </Col>
         <Col>
