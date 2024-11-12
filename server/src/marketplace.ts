@@ -1,5 +1,5 @@
 import pool from "./dbConfig";
-import {getUserId, getCharacterId, getClassId, getLeaderId, getItemId, getCategoryId, getRarityId} from "./dbConfig";
+import { getUserId, getCharacterId, getClassId, getLeaderId, getItemId, getCategoryId, getRarityId } from "./dbConfig";
 import { v4 as uuidv4 } from "uuid";
 
 // Format QUERY display for certain tables
@@ -58,7 +58,7 @@ const formatQuery = (tableName: string) => {
               I.item_price
             ORDER BY
               I.item_id;`,
-    
+
     "IN_INVENTORY": `SELECT
                 C.character_name AS character,
                 I.item_name AS item,
@@ -106,7 +106,7 @@ const handleCharacterInsert = async (columns: string[], values: any[]) => {
   const insertValues = [...values];
 
   const ownerIdx = columns.indexOf("owner");
-  if(ownerIdx === -1) {
+  if (ownerIdx === -1) {
     throw new Error("Owner could not be found");
   }
   const ownerName = values[ownerIdx];
@@ -115,20 +115,20 @@ const handleCharacterInsert = async (columns: string[], values: any[]) => {
   insertValues[ownerIdx] = ownerId;
 
   const classIdx = columns.indexOf("class");
-  if(classIdx === -1) {
+  if (classIdx === -1) {
     throw new Error("Class could not be found");
   }
   const className = values[classIdx];
-  const classId = await getClassId(className);      
+  const classId = await getClassId(className);
   insertCols[classIdx] = "character_class";
   insertValues[classIdx] = classId;
 
   const leaderIdx = columns.indexOf("leader");
-  if(leaderIdx === -1) {
+  if (leaderIdx === -1) {
     throw new Error("Leader could not be found");
   }
   insertCols[leaderIdx] = "leader_id";
-  if(values[leaderIdx] !== null) {
+  if (values[leaderIdx] !== null) {
     const leader = values[leaderIdx];
     const leaderId = await getLeaderId(leader, "CHARACTER");
     insertValues[leaderIdx] = leaderId;
@@ -141,7 +141,7 @@ const handleCharacterInsert = async (columns: string[], values: any[]) => {
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
-  return {query, value: insertValues};
+  return { query, value: insertValues };
 };
 
 const handleFriendInsert = async (columns: string[], values: any[]) => {
@@ -149,16 +149,16 @@ const handleFriendInsert = async (columns: string[], values: any[]) => {
   const insertValues = [...values];
 
   const characterIdx = columns.indexOf("character");
-  if(characterIdx === -1) {
+  if (characterIdx === -1) {
     throw new Error("Character could not be found");
-  } 
+  }
   const chararacterName = values[characterIdx];
   const characterId = await getCharacterId(chararacterName);
   insertCols[characterIdx] = "character_a_id";
   insertValues[characterIdx] = characterId;
 
   const friendIdx = columns.indexOf("friend");
-  if(friendIdx === -1) {
+  if (friendIdx === -1) {
     throw new Error("Friend could not be found");
   }
   const friendName = values[friendIdx];
@@ -171,15 +171,15 @@ const handleFriendInsert = async (columns: string[], values: any[]) => {
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
-  return {query, value: insertValues};
+  return { query, value: insertValues };
 };
 
 const handlePartyInsert = async (columns: string[], values: any[]) => {
   const insertCols = [...columns];
   const insertValues = [...values];
-  
+
   const leaderIdx = columns.indexOf("party_leader");
-  if(leaderIdx === -1) {
+  if (leaderIdx === -1) {
     throw new Error("Character could not be found");
   }
   const leader = values[leaderIdx];
@@ -191,7 +191,7 @@ const handlePartyInsert = async (columns: string[], values: any[]) => {
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
-  return {query, value: insertValues};
+  return { query, value: insertValues };
 }
 
 const handleItemInsert = async (columns: string[], values: any[]) => {
@@ -203,7 +203,7 @@ const handleItemInsert = async (columns: string[], values: any[]) => {
   );
 
   const categoryIdx = columns.indexOf("item_category");
-  if(categoryIdx === -1) {
+  if (categoryIdx === -1) {
     throw new Error("Item category not found");
   }
   const category = values[categoryIdx];
@@ -212,21 +212,25 @@ const handleItemInsert = async (columns: string[], values: any[]) => {
   insertValues[categoryIdx] = categoryId;
 
   const rarityIdx = columns.indexOf("item_rarity");
-  if(rarityIdx === -1) {
+  if (rarityIdx === -1) {
     throw new Error("Item rarity not found");
   }
   const rarity = values[rarityIdx];
   const rarityId = await getRarityId(rarity);
   insertCols[rarityIdx] = "rarity_id";
-  insertValues[rarityIdx] = rarityId;    
-  
+  insertValues[rarityIdx] = rarityId;
+
   const placeholders = insertCols.map((_, i) => `$${i + 1}`).join(", ");
   const query = `INSERT INTO "ITEM"
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
 
-  return {query, value: insertValues};
+  return { query, value: insertValues };
+};
+
+const handleItemUpdate = async (columns: string[], values: any[]) => {
+
 };
 
 const handleInventoryOrListingInsert = async (columns: string[], values: any[]) => {
@@ -234,7 +238,7 @@ const handleInventoryOrListingInsert = async (columns: string[], values: any[]) 
   const insertValues = [...values];
 
   const characterIdx = columns.indexOf("character");
-  if(characterIdx === -1) {
+  if (characterIdx === -1) {
     throw new Error("Character could not be found");
   }
   const characterName = values[characterIdx];
@@ -243,7 +247,7 @@ const handleInventoryOrListingInsert = async (columns: string[], values: any[]) 
   insertValues[characterIdx] = characterId;
 
   const itemIdx = columns.indexOf("item");
-  if(itemIdx === -1) {
+  if (itemIdx === -1) {
     throw new Error("Item could not be found");
   }
   const itemName = values[itemIdx];
@@ -256,7 +260,7 @@ const handleInventoryOrListingInsert = async (columns: string[], values: any[]) 
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
-  return {query, value: insertValues};
+  return { query, value: insertValues };
 };
 
 const handleTransactionInsert = async (columns: string[], values: any[]) => {
@@ -264,13 +268,13 @@ const handleTransactionInsert = async (columns: string[], values: any[]) => {
   const insertValues = [...values];
 
   const listingIdx = columns.indexOf("listing_id");
-  if(listingIdx === -1) {
+  if (listingIdx === -1) {
     throw new Error("Listing ID could not be found");
   }
   const listingId = values[listingIdx];
 
   const sellerIdx = columns.indexOf("seller");
-  if(sellerIdx === -1) {
+  if (sellerIdx === -1) {
     throw new Error("Seller could not be found");
   }
   const sellerName = values[sellerIdx];
@@ -279,7 +283,7 @@ const handleTransactionInsert = async (columns: string[], values: any[]) => {
   insertValues[sellerIdx] = sellerId;
 
   const buyerIdx = columns.indexOf("buyer");
-  if(buyerIdx === -1) {
+  if (buyerIdx === -1) {
     throw new Error("Buyer could not be found");
   }
   const buyerName = values[buyerIdx];
@@ -290,7 +294,7 @@ const handleTransactionInsert = async (columns: string[], values: any[]) => {
   // Check if the seller is on the LISTING table
   const listCheck = `SELECT 1 FROM "LISTING" WHERE character_id = $1 and listing_id = $2`
   const listRes = await pool.query(listCheck, [sellerId, listingId]);
-  if(listRes.rowCount === 0) {
+  if (listRes.rowCount === 0) {
     throw new Error(`Seller ${sellerName} is not listed in the LISTING table`);
   }
 
@@ -299,13 +303,13 @@ const handleTransactionInsert = async (columns: string[], values: any[]) => {
                   (${insertCols.join(", ")}) 
                   VALUES (${placeholders}) 
                   RETURNING *`;
-  return {query, value: insertValues};
+  return { query, value: insertValues };
 };
 
 const handleItemClassInsert = async (tableName: string, columns: string[], values: any[], data: Record<string, any>) => {
-  if(tableName === "ITEM") {
+  if (tableName === "ITEM") {
     const classesIdx = columns.indexOf("allowed_classes");
-    if(classesIdx !== -1) {
+    if (classesIdx !== -1) {
       const classes = values[classesIdx];
       const insertClasses = classes.map(async (className) => {
         const classId = await getClassId(className);
@@ -330,22 +334,22 @@ const getTable = async (tableName: string, displayFormat: string) => {
   }
 };
 
-const createRecord = async (tableName: string, data: Record<string, any>) => {  
+const createRecord = async (tableName: string, data: Record<string, any>) => {
   const columns = Object.keys(data);
   const values = Object.values(data);
 
-  if(columns.length === 0 || values.length === 0) {
+  if (columns.length === 0 || values.length === 0) {
     throw new Error("No columns or values provided");
   }
 
   // Generate UUID values for the primary key of the tables
-  if(!["ITEM", "LISTING", "ITEM_CATEGORY", "ITEM_RARITY"].includes(tableName) && columns[0].endsWith("_id")) {
+  if (!["ITEM", "LISTING", "ITEM_CATEGORY", "ITEM_RARITY"].includes(tableName) && columns[0].endsWith("_id")) {
     values[0] = uuidv4();
   }
 
   try {
     let handler;
-    switch(tableName) {
+    switch (tableName) {
       case "CHARACTER":
         handler = handleCharacterInsert;
         break;
@@ -369,8 +373,8 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
 
     let query, insertValues;
 
-    if(handler) {
-      ({query, value: insertValues} = await handler(columns, values));
+    if (handler) {
+      ({ query, value: insertValues } = await handler(columns, values));
     } else {
       const placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
       query = `INSERT INTO "${tableName}" 
@@ -390,6 +394,8 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         if (results && results.rows) {
           const row = results.rows[0];
           resolve(`Added ${JSON.stringify(row)} to ${tableName}`);
+
+
           // Add the list of classes that are allowed to an item into
           // the ITEM_CLASS table
           await handleItemClassInsert(tableName, columns, values, row);
@@ -398,13 +404,29 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
         }
       });
     });
-  } catch(error) {
+  } catch (error) {
     throw new Error("Internal server error");
   }
 };
 
+// Handles updating the record in the database
+const updateRecord = async (tableName) => {
+  console.log("Testing update record");
+  if (!tableName) {
+    throw new Error("Invalid parameters: Table name, identifier, identifier value, and data are required");
+  }
+}
 
+// Handles deleting the record in the database
+const deleteRecord = async (tableName) => {
+  console.log("Testing delete record");
+  if (!tableName) {
+    throw new Error("Invalid parameters: Table name, identifier, identifier value, and data are required");
+  }
+}
 module.exports = {
   getTable,
   createRecord,
+  updateRecord,
+  deleteRecord,
 };
