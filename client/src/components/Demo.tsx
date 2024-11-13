@@ -149,17 +149,15 @@ export default function Demo({ tableName }: TableProp) {
   const handleUpdate = () => {
     const formattedData = formatUpdateData(formData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
-    /*setFormData(formattedData);
-    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
       .put(URL, formattedData)
       .then((res) => {
-        setMessage(`Successfully updated record in ${tableName}`);
-        handleQuery(); // Refresh the table data
+        setMessage(`Sucessfully updated the "${tableName}" table`);
+        handleQuery();
       })
       .catch((err) => {
         setError(err);
-      })*/
+      })
   };
 
   const formatDeleteData = (formData: Record<string, any>) => {

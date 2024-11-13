@@ -54,7 +54,6 @@ app.post("/table/:table", (req: Request, res: Response) => {
 
 // UPDATE
 app.put("/table/:table", (req: Request, res: Response) => {
-  console.log("Update Request");
   const table = req.params.table;
   const data = req.body;
 
@@ -63,7 +62,7 @@ app.put("/table/:table", (req: Request, res: Response) => {
   }
 
   marketplace.updateRecord(table, data).then((response) => {
-    res.status(201).json(response);
+    res.status(200).json(response);
   })
   .catch((error) => {
     console.error(`Response was: ${error}`);

@@ -2,6 +2,7 @@ import pool from "./dbConfig";
 import * as insert from "./handleInsert";
 import { v4 as uuidv4 } from "uuid";
 import { formatQuery } from "./handleQuery";
+import * as update from "./handleUpdate";
 
 const getTable = async (tableName: string, displayFormat: string) => {
   try {
@@ -116,8 +117,44 @@ const deleteRecord = async (tableName: string, data: Record<string, any>) => {
       }
     })
   });
-          
 };
+
+const updateRecord = async (tableName: string, data: Record<string, any>) => {
+  const columns = Object.keys(data);
+  const values = Object.values(data);
+
+  try {
+    let handler;
+    switch(tableName) {
+      case "LISTING":
+        handler = update.handleListingUpdate;
+        break;
+      default:
+        throw new Error(`Handler has not been made for "${tableName}" yet`);
+    }
+
+    let query, insertValues;
+    ({query, value: insertValues} = await handler(columns, values));
+
+    return await new Promise(function (resolve, reject) {
+      pool.query(query, insertValues, async (error, results) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        if (results && results.rowCount > 0) {
+          resolve(`Updated ${results.rowCount} record(s) in ${tableName}`);
+        } else {
+          reject(new Error("No results found"));
+        }
+      })
+    });
+  } catch(error) {
+    console.log(`ERROR: ${error}`);
+    throw new Error("Internal server error");
+  }
+}; 
 
 
 
@@ -125,5 +162,6 @@ const deleteRecord = async (tableName: string, data: Record<string, any>) => {
 module.exports = {
   getTable,
   createRecord,
-  deleteRecord
+  deleteRecord,
+  updateRecord
 };
