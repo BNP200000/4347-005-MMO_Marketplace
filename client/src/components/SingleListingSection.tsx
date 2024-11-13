@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import axios from "axios";
-import { Col, Container, Row, Alert } from "react-bootstrap";
+import { Col, Container, Row, Alert, Card } from "react-bootstrap";
 import Image from "next/image";
 
 import DefaultImage from "../app/item_images/placehold_item_image.png";
@@ -16,16 +16,15 @@ import UnknownImage from "../app/item_images/temp_unknown_item.png";
 
 const PORT = process.env.PORT || 5001;
 
-// TODO: Rename this whole file
-
-export default function ListingHeader() {
+export default function SingleListingSection() {
   const params = useParams<{ listingId: string }>();
   const [listingId, setListingId] = useState(params.listingId);
   const [error, setError] = useState<string | null>(null);
   // Info to be displayed on the page
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Item");
   const [category, setCategory] = useState("");
   const [rarity, setRarity] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [allowedClasses, setAllowedClasses] = useState("");
 
@@ -46,6 +45,7 @@ export default function ListingHeader() {
       setName(res.data.listing.item_name);
       setCategory(res.data.listing.item_category);
       setRarity(res.data.listing.item_rarity);
+      setQuantity(res.data.listing.quantity);
       setPrice(res.data.listing.sale_price);
       setAllowedClasses(res.data.listing.item_allowed_classes);
 
@@ -78,32 +78,32 @@ export default function ListingHeader() {
 importInfo();
 
   return(
-    <Container>
+    <Container><Row><Col>
       {error && <Alert variant="danger">{error}</Alert>}
-      <Row><Col>
-        <h1>Listing #{params.listingId}</h1>
-        <h2>Item Info</h2>
-      </Col></Row>
-      <Row>
-        <Col>
-          <p>Name: {name}</p>
-          <p>Category: {category}</p>
-          <p>Rarity: {rarity}</p>
-          <p>Listed price: {price}</p>
-          <p>Allowed Classes: {allowedClasses}</p>
-        </Col>
-        <Col>
-          <Image
-            src={image}
-            alt="Item"
-            width={200}
-            height={200}
-            quality={100}
-            className="d-inline-block align-top"
-            style={{objectFit: "contain", marginRight: "0.75rem"}}
-          />
-        </Col>
-      </Row>
-    </Container>
+      <h1>Listing #{params.listingId}</h1>
+      <Card style={{ width: '70%' }}>
+        <Card.Body className="d-flex justify-content-between align-items-center">
+          <Col><div>
+            <h4>{name}</h4>
+            <p>Category: {category}</p>
+            <p>Rarity: {rarity}</p>
+            <p>Quantity: {quantity}</p>
+            <p>Unit price: {price} gold</p>
+            <p>Allowed classes: {allowedClasses}</p>
+          </div></Col>
+          <Col md="auto">
+            <Image
+              src={image}
+              alt="Item"
+              width={220}
+              height={220}
+              quality={100}
+              className="d-inline-block align-center"
+              style={{objectFit: "contain", marginLeft: "1.25rem", marginRight: "1.25rem"}}
+            />
+          </Col>
+        </Card.Body>
+      </Card>
+    </Col></Row></Container>
   );
 }
