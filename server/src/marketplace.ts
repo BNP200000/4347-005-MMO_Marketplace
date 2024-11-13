@@ -86,8 +86,37 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
       });
     });
   } catch(error) {
+    console.log(`ERROR: ${error}`);
     throw new Error("Internal server error");
   }
+};
+
+const deleteRecord = async (tableName: string, data: Record<string, any>) => {
+  const columns = Object.keys(data);
+  const values = Object.values(data);
+
+  const conditions = columns.map((col, index) => 
+    `"${col}" = $${index + 1}`
+  ).join(" AND ");
+
+  const query = `DELETE FROM "${tableName}" 
+                  WHERE ${conditions};`
+  
+  return await new Promise((resolve, reject) => {
+    pool.query(query, values, async (error, results) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      if(results && results.rowCount > 0) {
+        resolve(`Deleted ${results.rowCount} record(s) from ${tableName}`);
+      } else {
+        reject(new Error("No records were deleted"));
+      }
+    })
+  });
+          
 };
 
 
@@ -96,4 +125,5 @@ const createRecord = async (tableName: string, data: Record<string, any>) => {
 module.exports = {
   getTable,
   createRecord,
+  deleteRecord
 };

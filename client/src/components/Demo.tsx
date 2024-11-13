@@ -23,7 +23,7 @@ export default function Demo({ tableName }: TableProp) {
   const URL = `http://localhost:${PORT}/table/${tableName}`;
 
   // Filter out columns that should not be modifiable
-  const filterOut = ["class_id", "character_id", "user_id", "item_id", "listing_id", "transaction_id", "total_price"];
+  const filterOut = ["class_id", "character_id", "user_id", "item_id", "transaction_id", "total_price"];
   if(tableName === "TRANSACTION") {
     filterOut.splice(filterOut.indexOf("listing_id"), 1);
   }
@@ -71,7 +71,7 @@ export default function Demo({ tableName }: TableProp) {
   };
 
   // Check if the form data is valid, i.e. no null values
-  const formatFormData = (formData: Record<string, any>) => {
+  const formatInsertData = (formData: Record<string, any>) => {
     if(["LISTING", "TRANSACTION", "ITEM"].includes(tableName)) {
       if(tableName === "TRANSACTION") {
         if(formData.hasOwnProperty("listing_id")) {
@@ -106,13 +106,13 @@ export default function Demo({ tableName }: TableProp) {
       ])
     );
 
-    return formattedData
-  }
+    return formattedData;
+  };
 
   // Handle POST request
   const handleInsert = () => {
-    const formattedData = formatFormData(formData);
-    setFormData(formattedData);
+    const formattedData = formatInsertData(formData);
+    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
       .post(URL, formattedData)
       .then((res) => {
@@ -124,10 +124,32 @@ export default function Demo({ tableName }: TableProp) {
       });
   }
 
+  const formatUpdateData = (formData: Record<string, any>) => {
+    const filteredData = Object.fromEntries(
+      Object.entries(formData).filter(([key]) =>
+        ["listing_id", "quantity", "sale_price", "item_name"].includes(key)
+      )
+    );
+
+    const formattedData = Object.fromEntries(
+      Object.entries(filteredData).map(([key, value]) => [
+        key, 
+        (typeof value === "string" && (value.toLowerCase() === "null" || value.trim() === ""))
+          ? null
+          : (!isNaN(Number(value)) && typeof value === "string")
+            ? Number(value)
+            : value
+      ])
+    );
+
+    return formattedData;
+  };
+
   // Handle PUT request
   const handleUpdate = () => {
-    const formattedData = formatFormData(formData);
-    setFormData(formattedData);
+    const formattedData = formatUpdateData(formData);
+    console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
+    /*setFormData(formattedData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
       .put(URL, formattedData)
@@ -137,24 +159,46 @@ export default function Demo({ tableName }: TableProp) {
       })
       .catch((err) => {
         setError(err);
-      })
-  }
+      })*/
+  };
+
+  const formatDeleteData = (formData: Record<string, any>) => {
+    if (formData.hasOwnProperty("listing_id")) {
+      formData.listing_id = Number(formData.listing_id);
+    }
+  
+    // Remove all other fields
+    const cleanedData = { listing_id: formData.listing_id };
+  
+    // Format the data (e.g., convert empty strings to null, or convert numeric strings to numbers)
+    const formattedData = Object.fromEntries(
+      Object.entries(cleanedData).map(([key, value]) => [
+        key, 
+        (typeof value === "string" && (value.toLowerCase() === "null" || value.trim() === ""))
+          ? null
+          : (!isNaN(Number(value)) && typeof value === "string")
+            ? Number(value)
+            : value
+      ])
+    );
+
+    return formattedData;
+  };
 
   // Handle DELETE request
   const handleDelete = () => {
-    const formattedData = formatFormData(formData);
-    setFormData(formattedData);
+    const formattedData = formatDeleteData(formData);
     console.log(`Sending: ${JSON.stringify(formattedData, null, 2)}`);
     axios
-      .delete(URL, formattedData)
+      .delete(URL, {data: formattedData})
       .then((res) => {
-        setMessage(`Successfully updated record in ${tableName}`);
-        handleQuery(); // Refresh the table data
+        setMessage(`Successfully deleted record from ${tableName}`);
+        handleQuery();
       })
       .catch((err) => {
         setError(err);
-      })
-  }
+      });
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, type, checked, value} = e.target;

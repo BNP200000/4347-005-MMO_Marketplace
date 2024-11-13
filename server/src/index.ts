@@ -46,15 +46,15 @@ app.post("/table/:table", (req: Request, res: Response) => {
   marketplace.createRecord(table, data).then((response) => {
     res.status(201).json(response);
   })
-    .catch((error) => {
-      console.error(`Response was: ${error.message}`);
-      res.status(500).json({ error: "Internal server error" });
-    });
+  .catch((error) => {
+    console.error(`Response was: ${error.message}`);
+    res.status(500).json({ error: "Internal server error" });
+  });
 });
 
 // UPDATE
 app.put("/table/:table", (req: Request, res: Response) => {
-  console.log("Update Request")
+  console.log("Update Request");
   const table = req.params.table;
   const data = req.body;
 
@@ -65,15 +65,23 @@ app.put("/table/:table", (req: Request, res: Response) => {
   marketplace.updateRecord(table, data).then((response) => {
     res.status(201).json(response);
   })
-    .catch((error) => {
-      console.error(`Response was: ${error}`);
-      res.status(500).json({ error: "Internal server error" });
-    });
+  .catch((error) => {
+    console.error(`Response was: ${error}`);
+    res.status(500).json({ error: "Internal server error" });
+  });
 });
 
 // DELETE
 app.delete("/table/:table", (req: Request, res: Response) => {
+  const table = req.params.table;
+  const data = req.body;
 
+  marketplace.deleteRecord(table, data).then((response) => {
+    res.status(204).send()
+  })
+  .catch((error) => {
+    res.status(500).json({error:"Internal server error"});
+  });
 });
 
 app.listen(PORT, () => {

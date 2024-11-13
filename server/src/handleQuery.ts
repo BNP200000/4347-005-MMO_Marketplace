@@ -56,8 +56,8 @@ export const formatQuery = (tableName: string) => {
                 I.item_id;`,
       
       "IN_INVENTORY": `SELECT
-                  C.character_name AS character,
-                  I.item_name AS item,
+                  C.character_name AS character_name,
+                  I.item_name AS item_name,
                   V.quantity
               FROM "${tableName}" AS V
               LEFT JOIN 
