@@ -133,7 +133,7 @@ export const handleInventoryOrListingInsert = async (columns: string[], values: 
     const insertCols = [...columns];
     const insertValues = [...values];
   
-    const characterIdx = columns.indexOf("character_name");
+    const characterIdx = columns.indexOf("character");
     if(characterIdx === -1) {
       throw new Error("Character could not be found");
     }
@@ -142,7 +142,7 @@ export const handleInventoryOrListingInsert = async (columns: string[], values: 
     insertCols[characterIdx] = "character_id";
     insertValues[characterIdx] = characterId;
   
-    const itemIdx = columns.indexOf("item_name");
+    const itemIdx = columns.indexOf("item");
     if(itemIdx === -1) {
       throw new Error("Item could not be found");
     }
