@@ -36,7 +36,7 @@ export default function LoginForm() {
         setError(res.data.error);
       } else {
         // Set login data in the cookie
-        setLoginCookie({ username, password });
+        setLoginCookie({ ...res.data.user });
         // Redirect to the home page
         router.push("/");
       }

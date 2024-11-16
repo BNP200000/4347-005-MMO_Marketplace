@@ -39,7 +39,7 @@ export default function RegisterForm() {
           return;
         }
         // Set the registration data in the cookie
-        setLoginCookie({ username, password });
+        setLoginCookie({ ...res.data.user });
         // Redirect
         router.push("/");
       })
