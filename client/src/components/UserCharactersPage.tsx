@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col, Table, Alert } from "react-bootstrap";
+import { isLoggedIn } from "../utils/loginCookie";
 
 type Character = {
   character_id: string;
@@ -19,14 +19,42 @@ export default function UserCharactersPage() {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const response = await fetch("/getCharacters");
-        if (!response.ok) {
-          throw new Error("Failed to fetch characters");
+        if (!isLoggedIn()) {
+          setError("Please log in to view your characters");
+          setLoading(false);
+          return;
         }
+
+        const response = await fetch("http://localhost:5001/getCharacters", {
+          method: "GET",
+          credentials: "include",  // Important for sending cookies
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          }
+        });
+        
+        if (!response.ok) {
+          let errorMessage = "Failed to fetch characters";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            console.error("Error parsing error response:", e);
+          }
+          throw new Error(errorMessage);
+        }
+    
         const data = await response.json();
         setCharacters(data);
-      } catch (err: any) {
-        setError(err.message);
+        setError(null);
+      } catch (err: unknown) {
+        console.error("Error fetching characters:", err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to connect to the server");
+        }
       } finally {
         setLoading(false);
       }
@@ -35,17 +63,47 @@ export default function UserCharactersPage() {
     fetchCharacters();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (!isLoggedIn() && !loading) {
+    return (
+      <Container className="py-4">
+        <Alert variant="warning">
+          Please log in to view your characters.
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
-    <div>
-      <h1>User's Characters</h1>
-      <Container>
+    <Container className="py-4">
+      <h1 className="mb-4">My Characters</h1>
+      
+      {loading && (
+        <Alert variant="info">Loading your characters...</Alert>
+      )}
+
+      {error && (
+        <Alert variant="danger">
+          {error}
+          {error.includes("Failed to connect") && (
+            <div className="mt-2">
+              <small>
+                Please ensure:
+                <ul>
+                  <li>The server is running on port 5001</li>
+                  <li>You  connected to the internet</li>
+                  <li>There are no firewall issues blocking the connection</li>
+                </ul>
+              </small>
+            </div>
+          )}
+        </Alert>
+      )}
+
+      {!loading && !error && (
         <Row>
           <Col>
             {characters.length > 0 ? (
-              <Table striped bordered hover>
+              <Table striped bordered hover responsive>
                 <thead>
                   <tr>
                     <th>Character ID</th>
@@ -66,11 +124,13 @@ export default function UserCharactersPage() {
                 </tbody>
               </Table>
             ) : (
-              <p>No characters found for this user.</p>
+              <Alert variant="info">
+                You don ve any characters yet.
+              </Alert>
             )}
           </Col>
         </Row>
-      </Container>
-    </div>
+      )}
+    </Container>
   );
 }

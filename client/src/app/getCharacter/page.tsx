@@ -1,12 +1,13 @@
+'use client';
 import { Col, Container, Row } from "react-bootstrap";
-import SingleCharacterSection from "@/components/UserCharactersPage";
+import  UserCharactersPage from "@/components/UserCharactersPage";
 
-export default function UserCharactersPage() {
+export default function CharactersPage() {
   return (
     <Container>
       <Row>
         <Col>
-          <UserCharacterPage />
+          <UserCharactersPage /> {/* Render the component */}
         </Col>
       </Row>
     </Container>

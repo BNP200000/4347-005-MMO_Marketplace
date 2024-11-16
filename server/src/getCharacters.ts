@@ -1,42 +1,35 @@
-import { getSession } from "next-auth/react";
-import pool from "./dbConfig"; // Adjust the path to your dbConfig
+import express, { Request, Response } from "express";
+import { parseLoginCookie } from "./cookieUtil";
+import { getUserId } from "./getId";
+import pool from "./dbConfig";
 
-import { NextApiRequest, NextApiResponse } from "next";
+const router = express.Router();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+router.get("/", async (req: Request, res: Response) => {
   try {
-    // Get session of the logged-in user
-    const session = await getSession({ req });
-
-    if (!session || !session.user?.name) {
-      return res.status(401).json({ error: "Unauthorized" });
+    // Get login data from cookie instead of header
+    const loginData = parseLoginCookie(req.headers.cookie);
+    
+    if (!loginData?.username) {
+      res.status(401).json({ error: "Authentication required" });
+      return;
     }
-
-    // Fetch user_id from the database based on the logged-in username
-    const username = session.user.name;
-
-    const userResult = await pool.query(
-      `SELECT user_id FROM "USER" WHERE username = $1`,
-      [username]
-    );
-
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const userId = userResult.rows[0].user_id;
-
-    // Fetch characters associated with the user_id
-    const charactersResult = await pool.query(
-      `SELECT character_id, character_name, exp_level, character_class
-       FROM characters
-       WHERE user_id = $1`,
+    
+    const userId = await getUserId(loginData.username);
+    
+    const result = await pool.query(
+      `SELECT c.character_id, c.character_name, c.exp_level, cl.class_name AS character_class
+       FROM "CHARACTER" c
+       JOIN "CLASS" cl ON c.character_class = cl.class_id
+       WHERE c.owner_id = $1`,
       [userId]
     );
 
-    res.status(200).json(charactersResult.rows);
-  } catch (error) {
-    console.error("Error fetching characters:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error in getCharacters:", err);
+    res.status(500).json({ error: err instanceof Error ? err.message : "Failed to fetch characters" });
   }
-}
+});
+
+export default router;
