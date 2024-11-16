@@ -6,7 +6,7 @@ export default function UserCharactersPage() {
     <Container>
       <Row>
         <Col>
-          <SingleCharacterSection />
+          <UserCharacterPage />
         </Col>
       </Row>
     </Container>
