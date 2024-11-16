@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Table, Alert } from "react-bootstrap";
 import { isLoggedIn } from "../utils/loginCookie";
+import Link from "next/link";
 
 type Character = {
   character_id: string;
@@ -27,7 +28,7 @@ export default function UserCharactersPage() {
 
         const response = await fetch("http://localhost:5001/getCharacters", {
           method: "GET",
-          credentials: "include",  // Important for sending cookies
+          credentials: "include",
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json"
@@ -90,7 +91,7 @@ export default function UserCharactersPage() {
                 Please ensure:
                 <ul>
                   <li>The server is running on port 5001</li>
-                  <li>You  connected to the internet</li>
+                  <li>You are connected to the internet</li>
                   <li>There are no firewall issues blocking the connection</li>
                 </ul>
               </small>
@@ -116,7 +117,14 @@ export default function UserCharactersPage() {
                   {characters.map((character) => (
                     <tr key={character.character_id}>
                       <td>{character.character_id}</td>
-                      <td>{character.character_name}</td>
+                      <td>
+                        <Link 
+                          href={`/character/${character.character_id}/listings`}
+                          className="text-primary hover:underline"
+                        >
+                          {character.character_name}
+                        </Link>
+                      </td>
                       <td>{character.exp_level}</td>
                       <td>{character.character_class}</td>
                     </tr>
@@ -125,7 +133,7 @@ export default function UserCharactersPage() {
               </Table>
             ) : (
               <Alert variant="info">
-                You don ve any characters yet.
+                You do not have any characters yet.
               </Alert>
             )}
           </Col>
