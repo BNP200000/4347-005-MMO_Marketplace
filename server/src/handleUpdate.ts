@@ -51,3 +51,4 @@ export const handleListingUpdate = async (columns: string[], values: any[]) => {
 
     return {query, value: insertValues};
 };
+
