@@ -35,16 +35,9 @@ export default function Header() {
         >
           <Nav className="align-items-center">
             <Nav.Link
-              href="/pet"
-              className="mx-2"
-              style={{ color: getLinkColor("/pet") }}
-              onClick={() => router.push("/pet")}
-            >
-              Pet
-            </Nav.Link>
-            <Nav.Link
               href="/character"
               className="mx-2"
+              style={{ color: getLinkColor("/character") }}
               onClick={() => router.push("/character")}
             >
               Character & Individual Listings
