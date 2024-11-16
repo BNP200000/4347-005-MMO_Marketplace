@@ -16,6 +16,7 @@ export default function CharacterListingsPage() {
           <Col>
             <p><Link href="/character/1a2b3c456/listings">Click for Listings for Character 1a2b3c456</Link></p>
             <p><Link href="/character/1a2b3c456/listings/1">Click for Listing 1 under Character 1a2b3c456</Link></p>
+            <p><Link href="/getCharacter">user characters</Link></p>
           </Col>
         </Row>
       </Container>
