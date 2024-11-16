@@ -35,6 +35,13 @@ export default function Header() {
         >
           <Nav className="align-items-center">
             <Nav.Link
+              href="/getCharacter"
+              className="mx-2"
+              onClick={() => router.push("/getCharacter")}
+            >
+              My Characters
+            </Nav.Link>
+            <Nav.Link
               href="/character"
               className="mx-2"
               style={{ color: getLinkColor("/character") }}
