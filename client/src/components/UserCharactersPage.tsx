@@ -19,7 +19,7 @@ export default function UserCharactersPage() {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const response = await fetch("/api/getCharacters");
+        const response = await fetch("/getCharacters");
         if (!response.ok) {
           throw new Error("Failed to fetch characters");
         }
