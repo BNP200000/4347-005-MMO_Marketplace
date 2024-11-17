@@ -127,10 +127,8 @@ export default function SingleListingSection() {
       })
       .catch((err) => {
         setError(err);
-      })
-
-    
-  }
+      });
+  };
 
   return (
     <Container>
