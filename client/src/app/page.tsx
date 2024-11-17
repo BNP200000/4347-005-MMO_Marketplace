@@ -9,9 +9,8 @@ import { useState } from "react";
 export default function Home() {
   // List of tables to display
   const tables = [
-    "USER", "CLASS", "CHARACTER", "PARTY",
-    "CHARACTER_FRIEND", "ITEM", "IN_INVENTORY", 
-    "LISTING", "TRANSACTION"
+    "CHARACTER_TRANSACTION", "CHARACTER_INVENTORY", "USER_CHARACTER_INFO",
+    "ITEM_INFO", "ITEM_MARKET"
   ];
   const [table, setTable] = useState(tables[0]);
 
@@ -24,7 +23,7 @@ export default function Home() {
       <main className={styles.main}>
         <div>
           <label htmlFor="table-select" style={{marginRight:"8px"}}>
-            Select Table:
+            Select View:
           </label>
           <select 
             id="table-select"
@@ -42,7 +41,7 @@ export default function Home() {
 
         <Demo tableName={table}/>
 
-        <div className={styles.ctas}>
+        {/*<div className={styles.ctas}>
           <a
             className={styles.primary}
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -66,9 +65,9 @@ export default function Home() {
           >
             Read our docs
           </a>
-        </div>
+        </div>*/}
       </main>
-      <footer className={styles.footer}>
+      {/*<footer className={styles.footer}>
         <a
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
           target="_blank"
@@ -111,7 +110,7 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
-      </footer>
+      </footer>*/}
     </div>
   );
 }

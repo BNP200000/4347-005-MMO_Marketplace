@@ -71,7 +71,7 @@ export default function Demo({ tableName }: TableProp) {
   };
 
   // Check if the form data is valid, i.e. no null values
-  const formatInsertData = (formData: Record<string, any>) => {
+  /*const formatInsertData = (formData: Record<string, any>) => {
     if(["LISTING", "TRANSACTION", "ITEM"].includes(tableName)) {
       if(tableName === "TRANSACTION") {
         if(formData.hasOwnProperty("listing_id")) {
@@ -213,14 +213,14 @@ export default function Demo({ tableName }: TableProp) {
 
       return newData;
     })
-  };
+  };*/
 
   // Load immediately
   useEffect(() => {
-    setShowForm(false);
+    //setShowForm(false);
     setTable([]);
     setColumns([]);
-    setFormData({});
+    //setFormData({});
     handleQuery();
   }, [PORT, tableName])
 
@@ -262,7 +262,7 @@ export default function Demo({ tableName }: TableProp) {
     <p>No data available for this table.</p>
   );
 
-  const displayForm = showForm && tableName !== "USER" && (
+  /*const displayForm = showForm && tableName !== "USER" && (
     <Form>
       {columns
         .filter(col => !filterOut.includes(col))
@@ -303,7 +303,7 @@ export default function Demo({ tableName }: TableProp) {
         }
       )}
     </Form>
-  );
+  );*/
 
   return (
     <div
@@ -324,16 +324,15 @@ export default function Demo({ tableName }: TableProp) {
 
       {tableData}
 
-      {displayForm}
+      {/*{displayForm}*/}
 
-      <Container>
+      {/*(<Container>
         <Row>
-          {/*<Col><Button variant="primary" onClick={handleQuery}>QUERY</Button></Col>*/}
           <Col><Button variant="primary" onClick={handleInsert}>INSERT</Button></Col>
           <Col><Button variant="primary" onClick = {handleDelete}>DELETE</Button></Col>
           <Col><Button variant="primary" onClick = {handleUpdate}>UPDATE</Button></Col>
         </Row>
-      </Container>
+      </Container>*/}
 
     </div>
   );
