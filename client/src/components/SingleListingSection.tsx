@@ -7,14 +7,16 @@ import Image from "next/image";
 
 import UpdateListingModal from "./UpdateListingModal"; // Import the modal
 
-import DefaultImage from "../app/item_images/placehold_item_image.png";
-import ConsumableImage from "../app/item_images/temp_consumable_item.png";
-import WeaponImage from "../app/item_images/temp_weapon_item.png";
-import ArmorImage from "../app/item_images/temp_armor_item.png";
-import AccessoryImage from "../app/item_images/temp_accessory_item.png";
-import ShieldImage from "../app/item_images/temp_shield_item.png";
-import HeadgearImage from "../app/item_images/temp_headgear_item.png";
-import UnknownImage from "../app/item_images/temp_unknown_item.png";
+// import DefaultImage from "../app/item_images/placehold_item_image.png";
+import EmptyImage from "../app/item_images/empty_item.png"
+import ConsumableImage from "../app/item_images/consumable_item.png";
+import WeaponImage from "../app/item_images/weapon_item.png";
+import ArmorImage from "../app/item_images/armor_item.png";
+import AccessoryImage from "../app/item_images/accessory_item.png";
+import AccessoryBleeboImage from "../app/item_images/accessory_bleebo.png"
+import ShieldImage from "../app/item_images/shield_item.png";
+import HeadgearImage from "../app/item_images/headgear_item.png";
+import UnknownImage from "../app/item_images/unknown_item.png";
 
 const PORT = process.env.PORT || 5001;
 
@@ -44,7 +46,7 @@ export default function SingleListingSection() {
     item_allowed_classes: "",
   });
 
-  const [image, setImage] = useState(DefaultImage);
+  const [image, setImage] = useState(EmptyImage);
   const [showModal, setShowModal] = useState(false); // Modal visibility state
 
   // Fetch the listing data and ensure types are correct
@@ -79,7 +81,10 @@ export default function SingleListingSection() {
             setImage(ArmorImage);
             break;
           case "Accessory":
-            setImage(AccessoryImage);
+            // 1 in 10 chance to display the necklace that Bleebo's soul was trapped in
+            if (Math.floor(Math.random() * 10.0) == 0)
+            { setImage(AccessoryBleeboImage); }
+            else { setImage(AccessoryImage); }
             break;
           case "Shield":
             setImage(ShieldImage);
