@@ -1,20 +1,25 @@
-import express, { Request, response, Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
+import getCharacters from "./getCharacters";
 const marketplace = require("./marketplace");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 const corsOptions = {
-  origin: true, // Allow all origins
-  methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Username"], // Add X-Username
 };
+
 
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use("/login", require("./login"));
 app.use("/register", require("./register"));
 app.use("/listing", require("./listing"));
+app.use("/getCharacters", getCharacters);
 
 // ROUTES
 
