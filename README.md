@@ -16,14 +16,14 @@ npm i
 npm run dev
 ```
 
-6. Then, in a new terminal:
+7. Then, in a new terminal:
 ```bash
 cd server
 npm i
 npm start
 ```
 
-7. Now, go to http://localhost:3000/
+8. Now, go to http://localhost:3000/
 
 
 ## Here are some helpful development resources:
