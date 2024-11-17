@@ -80,7 +80,6 @@ router.get("/items", async (req: Request, res: Response) => {
     `);
 
     // Add debug logging
-    console.log('Query result:', result.rows);
     
     res.json(result.rows);
   } catch (error) {

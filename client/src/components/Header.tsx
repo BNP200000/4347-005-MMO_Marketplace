@@ -41,14 +41,6 @@ export default function Header() {
             >
               My Characters
             </Nav.Link>
-            <Nav.Link
-              href="/character"
-              className="mx-2"
-              style={{ color: getLinkColor("/character") }}
-              onClick={() => router.push("/character")}
-            >
-              Character & Individual Listings
-            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
 
