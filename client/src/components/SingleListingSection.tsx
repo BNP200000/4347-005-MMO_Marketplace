@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter} from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Col, Container, Row, Alert, Card, Button } from "react-bootstrap";
@@ -29,7 +29,8 @@ type ListingType = {
 };
 
 export default function SingleListingSection() {
-  const params = useParams<{ listingId: string }>();
+  const params = useParams<{ characterId: string, listingId: string }>();
+  const router = useRouter();
   const [listingId, setListingId] = useState(params.listingId);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,67 +48,89 @@ export default function SingleListingSection() {
   const [showModal, setShowModal] = useState(false); // Modal visibility state
 
   // Fetch the listing data and ensure types are correct
-  useEffect(() => {
-    const fetchListing = async () => {
-      try {
-        const res = await axios.get(`http://localhost:${PORT}/listing`, {
-          params: { listingId },
+  const fetchListing = async () => {
+    try {
+      const res = await axios.get(`http://localhost:${PORT}/listing`, {
+        params: { listingId },
+      });
+
+      if (res.data.error) {
+        setError(res.data.error);
+      } else {
+        const data = res.data.listing;
+        setListing({
+          item_name: data.item_name,
+          item_category: data.item_category,
+          item_rarity: data.item_rarity,
+          quantity: Number(data.quantity), // Convert to number
+          sale_price: Number(data.sale_price), // Convert to number
+          item_allowed_classes: data.item_allowed_classes,
         });
 
-        if (res.data.error) {
-          setError(res.data.error);
-        } else {
-          const data = res.data.listing;
-          setListing({
-            item_name: data.item_name,
-            item_category: data.item_category,
-            item_rarity: data.item_rarity,
-            quantity: Number(data.quantity), // Convert to number
-            sale_price: Number(data.sale_price), // Convert to number
-            item_allowed_classes: data.item_allowed_classes,
-          });
-
-          // Set the image based on category
-          switch (data.item_category) {
-            case "Consumable":
-              setImage(ConsumableImage);
-              break;
-            case "Weapon":
-              setImage(WeaponImage);
-              break;
-            case "Armor":
-              setImage(ArmorImage);
-              break;
-            case "Accessory":
-              setImage(AccessoryImage);
-              break;
-            case "Shield":
-              setImage(ShieldImage);
-              break;
-            case "Headgear":
-              setImage(HeadgearImage);
-              break;
-            default:
-              setImage(UnknownImage);
-          }
+        // Set the image based on category
+        switch (data.item_category) {
+          case "Consumable":
+            setImage(ConsumableImage);
+            break;
+          case "Weapon":
+            setImage(WeaponImage);
+            break;
+          case "Armor":
+            setImage(ArmorImage);
+            break;
+          case "Accessory":
+            setImage(AccessoryImage);
+            break;
+          case "Shield":
+            setImage(ShieldImage);
+            break;
+          case "Headgear":
+            setImage(HeadgearImage);
+            break;
+          default:
+            setImage(UnknownImage);
         }
-      } catch {
-        setError("An error occurred. Please try again.");
       }
-    };
+    } catch {
+      setError("An error occurred. Please try again.");
+    }
+  };
 
+  useEffect(() => {
     fetchListing();
   }, [listingId]);
 
   // Handle updating the listing
   const handleUpdateListing = async (listingId: string, updatedFields: { [key: string]: any }) => {
+    updatedFields["listing_id"] = Number(listingId);    
+    
     try {
-      await axios.put(`http://localhost:${PORT}/listing/${listingId}`, updatedFields);
-      setListing({ ...listing, ...updatedFields }); // Update local state with new values
-    } catch (err) {
-      setError("Failed to update listing.");
+      const res = await axios.put(`http://localhost:${PORT}/table/LISTING`, 
+        updatedFields);
+      setListing((prevListing) => ({
+        ...prevListing,
+        ...updatedFields
+      }));
+      fetchListing();
+    } catch(err) {
+      console.log(err);
     }
   };
+
+  const handleDeleteListing = async (listingId: string) => {
+    axios
+      .delete(`http://localhost:${PORT}/table/LISTING`, {
+        data: {listing_id: Number(listingId)}
+      })
+      .then((res) => {
+        router.push(`http://localhost:3000/character/${params.characterId}/listings`);
+      })
+      .catch((err) => {
+        setError(err);
+      })
+
+    
+  }
 
   return (
     <Container>
@@ -148,7 +171,7 @@ export default function SingleListingSection() {
               </Button>
             </Col>
             <Col xs="auto">
-              <Button variant="primary">Delete</Button>
+              <Button variant="primary" onClick={() => handleDeleteListing(listingId)}>Delete</Button>
             </Col>
           </Row>
         </Col>

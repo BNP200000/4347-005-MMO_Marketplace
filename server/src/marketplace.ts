@@ -96,6 +96,9 @@ const deleteRecord = async (tableName: string, data: Record<string, any>) => {
   const columns = Object.keys(data);
   const values = Object.values(data);
 
+  console.log(columns);
+  console.log(values);
+
   const conditions = columns.map((col, index) => 
     `"${col}" = $${index + 1}`
   ).join(" AND ");

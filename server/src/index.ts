@@ -57,12 +57,15 @@ app.put("/table/:table", (req: Request, res: Response) => {
   const table = req.params.table;
   const data = req.body;
 
+  console.log(`DATA: ${JSON.stringify(data, null, 2)}`);
+
   if (!data || typeof data === "object" && Object.keys(data).length === 0) {
     res.status(400).json({ error: "Request body cannot be empty" });
   }
 
   marketplace.updateRecord(table, data).then((response) => {
     res.status(200).json(response);
+    console.log(response);
   })
   .catch((error) => {
     console.error(`Response was: ${error}`);
@@ -79,6 +82,7 @@ app.delete("/table/:table", (req: Request, res: Response) => {
     res.status(204).send()
   })
   .catch((error) => {
+    console.log(error);
     res.status(500).json({error:"Internal server error"});
   });
 });

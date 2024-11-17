@@ -14,7 +14,6 @@ interface UpdateListingModalProps {
   initialValues: {
     item_name?: string;
     quantity?: number;
-    listing_date?: string;
     sale_price?: number;
   };
 }
@@ -132,7 +131,7 @@ export default function UpdateListingModal({
           </Form.Group>
 
           {/* Listing date input */}
-          <Form.Group className="mb-3">
+          {/*<Form.Group className="mb-3">
             <Form.Label>Listing Date</Form.Label>
             <Form.Control
               type="date"
@@ -140,7 +139,7 @@ export default function UpdateListingModal({
               onChange={(e) => setListing({ ...listing, listing_date: e.target.value })}
               required
             />
-          </Form.Group>
+          </Form.Group>*/}
 
           {/* Sale price input */}
           <Form.Group className="mb-3">
