@@ -39,11 +39,13 @@ AS SELECT
 	U.username AS username,
 	U.email AS email,
 	C.character_name AS character,
+	CL.class_name AS class,
 	C.exp_level AS level,
 	C.gold_balance AS balance
 FROM 
 	"USER" U
-	INNER JOIN "CHARACTER" C ON U.user_id = C.owner_id;
+	INNER JOIN "CHARACTER" C ON U.user_id = C.owner_id
+	INNER JOIN "CLASS" CL ON C.character_class = CL.class_id;
 
 -- Create a view detailing the item info
 -- such as name, category, rarity, and
